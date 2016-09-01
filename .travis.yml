@@ -1,0 +1,21 @@
+language: go
+sudo: false
+go:
+  - 1.4
+  - 1.5
+  - 1.6
+  - tip
+matrix:
+  allow-failures:
+    - go: tip
+script:
+  # Vet GoCaluate changes and report
+  - go vet -x ./...
+  # Run the unit tests suite
+  - go test -v ./...
+  # Collect coverage reports
+  - chmod ugo+x scripts/generate_coverage_report.sh
+  - ./scripts/generate_coverage_report.sh
+after_success:
+  # Send coverage reports to Codecov
+  - bash <(curl -s https://codecov.io/bash) -f coverage.txt
