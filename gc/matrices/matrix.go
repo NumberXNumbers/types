@@ -210,12 +210,13 @@ func (m *matrix) Det() (gcv.Value, error) {
 		for j := i + 1; j < rows; j++ {
 			valueA := matrixCopy.Get(i, i).Copy()
 			valueB := matrixCopy.Get(j, i).Copy()
-			if valueA.Real() < valueB.Real() || valueA.Complex() == 0 {
+			valueAComplex := valueA.Complex()
+			if valueA.Real() < valueB.Real() || (valueAComplex == 0 && valueB.Complex() != 0) {
 				matrixCopy.Swap(i, j)
 				pivots++
 				vector := sub(matrixCopy.Elements().Get(j), sMult(valueA, sDiv(valueB, matrixCopy.Elements().Get(i))))
 				matrixCopy.Elements().Set(j, vector)
-			} else {
+			} else if valueAComplex != 0 {
 				vector := sub(matrixCopy.Elements().Get(j), sMult(valueB, sDiv(valueA, matrixCopy.Elements().Get(i))))
 				matrixCopy.Elements().Set(j, vector)
 			}
@@ -224,6 +225,10 @@ func (m *matrix) Det() (gcv.Value, error) {
 			det = gcvops.Mult(matrixCopy.Get(i, i), det)
 		} else if i == 1 {
 			det = gcvops.Mult(matrixCopy.Get(1, 1), matrixCopy.Get(0, 0))
+		}
+
+		if i >= 1 && det.Complex() == 0 {
+			return det, nil
 		}
 	}
 	if pivots%2 != 0 {
