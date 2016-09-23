@@ -302,6 +302,20 @@ func TestDet(t *testing.T) {
 	if errD == nil {
 		t.Error("Expected error")
 	}
+
+	testVectorEa := v.MakeVector(v.RowSpace, 0, 0)
+	testVectorEb := v.MakeVector(v.RowSpace, 0, 1)
+	testVectorsE := v.MakeVectors(v.RowSpace, testVectorEa, testVectorEb)
+	testMatrixE := MakeMatrixAlt(testVectorsE)
+	detE, errE := testMatrixE.Det()
+
+	if errE != nil {
+		t.Fail()
+	}
+
+	if detE.Real() != 0 {
+		t.Errorf("Expected %v, received %v", 2, detE)
+	}
 }
 
 func TestAug(t *testing.T) {
