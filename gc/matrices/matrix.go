@@ -327,11 +327,18 @@ func (m *matrix) Inv() (Matrix, error) {
 	for i := 0; i < degree; i++ {
 		valueA := augMatrix.Get(i, i).Copy()
 		if valueA.Complex() == 0 {
-			count := i
-			for count < degree && valueA.Complex() == 0 {
-				augMatrix.Swap(i, count)
-				valueA = augMatrix.Get(i, i).Copy()
+			count := i + 1
+			for count < degree {
+				valueAtCount := augMatrix.Get(count, i)
+				if valueAtCount.Complex() != 0 {
+					valueA = valueAtCount.Copy()
+					augMatrix.Swap(i, count)
+					break
+				}
 				count++
+				if count == degree {
+					return nil, errors.New("Matrix does not have an inverse")
+				}
 			}
 		}
 
