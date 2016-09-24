@@ -20,6 +20,8 @@ func TestGetNumColsAndGetNumRows(t *testing.T) {
 	if testMatrixA.GetNumCols() != 4 {
 		t.Errorf("Expected %d, received %d", 4, testMatrixA.GetNumCols())
 	}
+
+	Print(testMatrixA)
 }
 
 func TestIsIdenity(t *testing.T) {

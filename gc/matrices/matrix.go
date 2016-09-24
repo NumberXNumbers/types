@@ -2,6 +2,7 @@ package matrices
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"reflect"
 
@@ -430,4 +431,19 @@ func MakeConjTransMatrix(m Matrix) Matrix {
 	conjTransMatrix := m.Copy()
 	conjTransMatrix.ConjTrans()
 	return conjTransMatrix
+}
+
+// Print will Print out a matrix
+func Print(m Matrix) {
+	rows, cols := m.Dim()
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			if m.Type() == gcv.Complex {
+				fmt.Printf("%v ", m.Get(i, j).Complex())
+			} else {
+				fmt.Printf("%f ", m.Get(i, j).Real())
+			}
+		}
+		fmt.Println()
+	}
 }
