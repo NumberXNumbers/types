@@ -181,13 +181,21 @@ func TestComplex(t *testing.T) {
 	}
 }
 
-func TestMakeValuesAndValues(t *testing.T) {
+func TestMakeValuesNewValuesAndValues(t *testing.T) {
 	testValueA := MakeValue(0.5)
-	testValueB := MakeValue(0.6)
-	testValues := MakeValues(testValueA, testValueB)
+	testValueB := MakeValue(0.6+0.4i)
+	testValueC := NewValue()
+	testValuesA := MakeValues(testValueA, testValueB, testValueC)
 
-	if !reflect.DeepEqual(testValues.Values()[0], testValueA) || !reflect.DeepEqual(testValues.Values()[1], testValueB) {
+	if !reflect.DeepEqual(RetrieveValues(testValuesA)[0], testValueA) || !reflect.DeepEqual(testValuesA.values()[1], testValueB) || testValuesA.values()[2] != nil {
 		t.Fail()
+	}
+
+	testValuesB := NewValues(3)
+	for i := 0; i < testValuesB.Len(); i++ {
+		if !reflect.DeepEqual(testValuesB.Get(i), NewValue()) {
+			t.Fail()
+		}
 	}
 }
 
@@ -264,15 +272,15 @@ func TestAppendValue(t *testing.T) {
 	testValueC := MakeValue(0.7)
 	testValuesA.Append(testValueC)
 
-	if !reflect.DeepEqual(testValuesA.Values()[2], testValueC) {
+	if !reflect.DeepEqual(testValuesA.values()[2], testValueC) {
 		t.Fail()
 	}
 
 	testValuesB := MakeValues()
 	testValuesB.Append(testValueC)
 
-	if !reflect.DeepEqual(testValuesB.Values()[0], testValueC) {
-		t.Errorf("Expected %v, received %v", testValueC, testValuesB.Values()[0])
+	if !reflect.DeepEqual(testValuesB.values()[0], testValueC) {
+		t.Errorf("Expected %v, received %v", testValueC, testValuesB.values()[0])
 	}
 }
 
@@ -288,7 +296,7 @@ func TestSubsetAndLenValues(t *testing.T) {
 
 	lenB := testValues.Len()
 
-	if !reflect.DeepEqual(testValues.Values()[0], testValueB) || !reflect.DeepEqual(testValues.Values()[1], testValueC) {
+	if !reflect.DeepEqual(testValues.values()[0], testValueB) || !reflect.DeepEqual(testValues.values()[1], testValueC) {
 		t.Fail()
 	}
 

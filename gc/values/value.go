@@ -28,6 +28,8 @@ type Value interface {
 	Type() Type
 
 	Copy() Value
+
+	IsZero() bool
 }
 
 type value struct {
@@ -113,6 +115,10 @@ func (v *value) Copy() Value {
 	return value
 }
 
+func (v *value) IsZero() bool {
+	return v.Real() == 0 && v.Imag() == 0
+}
+
 // NewValue returns the 0 real value
 func NewValue() Value {
 	value := new(value)
@@ -121,6 +127,9 @@ func NewValue() Value {
 
 // MakeValue returns a Value with value val
 func MakeValue(val interface{}) Value {
+	if _, ok := val.(Value); ok {
+		return val.(Value)
+	}
 	value := new(value)
 	value.Set(val)
 	return value

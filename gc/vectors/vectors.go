@@ -98,7 +98,7 @@ func (v *vectors) SetValue(i int, j int, value gcv.Value) {
 	}
 	vector := v.vects[i]
 	values := vector.Elements()
-	values.Values()[j] = value
+	values.Set(j, value)
 }
 
 func (v *vectors) Append(vect Vector) {
@@ -129,7 +129,7 @@ func (v *vectors) Subset(start, finish int) Vectors {
 
 func (v *vectors) IndexOf(vect Vector) int {
 	found := false
-	values := vect.Elements().Values()
+	values := gcv.RetrieveValues(vect.Elements())
 	for index, vector := range v.Vectors() {
 		if vect.Len() != vector.Len() {
 			continue

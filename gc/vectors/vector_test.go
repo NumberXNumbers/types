@@ -125,6 +125,17 @@ func TestMakeNewTransVector(t *testing.T) {
 	}
 }
 
+func TestMakeNewConjVector(t *testing.T) {
+	testVectorA := NewVector(RowSpace, 4)
+	testTransVectorA := MakeConjVector(testVectorA)
+
+	testVectorA.Conj()
+
+	if !reflect.DeepEqual(testVectorA, testTransVectorA) {
+		t.Errorf("Expected %v, received %v", true, reflect.DeepEqual(testVectorA, testTransVectorA))
+	}
+}
+
 func TestMakeNewConjTransVector(t *testing.T) {
 	testVectorA := NewVector(RowSpace, 4)
 	testTransVectorA := MakeConjTransVector(testVectorA)
