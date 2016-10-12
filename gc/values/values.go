@@ -2,6 +2,9 @@ package values
 
 // Values works as GoCalculate's main list of values
 type Values interface {
+	// Returns the Raw Value slice. Used mainly for use with range
+	values() []Value
+
 	// Returns the index of val. If val is not in Values it returns -1.
 	IndexOf(val Value) int
 
@@ -13,9 +16,6 @@ type Values interface {
 
 	// Returns the Value at index
 	Get(index int) Value
-
-	// Returns the Raw Value slice. Used mainly for use with range
-	Values() []Value
 
 	// Returns a subset of Values from start to finish
 	Subset(start, finish int) Values
@@ -36,42 +36,54 @@ type values struct {
 	coreType Type
 }
 
-func (v *values) Type() Type { return v.coreType }
-
 func (v *values) setValues(vals []Value) {
 	v.vals = make([]Value, len(vals))
 	v.length = len(vals)
 	v.coreType = Real
 	for index, val := range vals {
-		v.vals[index] = val.Copy()
-		if v.Type() < val.Type() {
-			v.coreType = val.Type()
+		if val != nil {
+			v.Set(index, val.Copy())
 		}
 	}
 }
 
+func (v *values) values() []Value { return v.vals }
+
+func (v *values) Type() Type { return v.coreType }
+
 func (v *values) Len() int { return v.length }
 
-func (v *values) Values() []Value { return v.vals }
-
 func (v *values) Set(index int, val Value) {
-	if v.Type() < val.Type() {
-		v.coreType = val.Type()
+	if !val.IsZero() {
+		if v.Type() < val.Type() {
+			v.coreType = val.Type()
+		}
+		v.vals[index] = val
+	} else {
+		v.vals[index] = nil
 	}
-	v.vals[index] = val
 }
 
-func (v *values) Get(index int) Value { return v.vals[index] }
+func (v *values) Get(index int) Value {
+	val := v.vals[index]
+	if val == nil {
+		return NewValue()
+	}
+	return val
+}
 
 func (v *values) Append(val Value) {
-	v.setValues(append(v.Values(), val))
+	vals := append(v.values(), val)
+	v.setValues(vals)
 }
 
 func (v *values) Copy() Values {
 	vals := new(values)
 	vElements := make([]Value, len(v.vals))
-	for index, val := range v.Values() {
-		vElements[index] = val.Copy()
+	for index, val := range v.values() {
+		if val != nil {
+			vElements[index] = val.Copy()
+		}
 	}
 	vals.length = v.Len()
 	vals.coreType = v.Type()
@@ -88,14 +100,26 @@ func (v *values) Subset(start, finish int) Values {
 }
 
 func (v *values) IndexOf(val Value) int {
-	for index, value := range v.Values() {
-		if value.Type() == Complex && value.Complex() == val.Complex() {
-			return index
-		} else if value.Real() == val.Real() {
-			return index
+	for index, value := range v.values() {
+		if value != nil {
+			if value.Type() == Complex && value.Complex() == val.Complex() {
+				return index
+			} else if value.Real() == val.Real() {
+				return index
+			}
 		}
 	}
 	return -1
+}
+
+// NewValues will return a new Values
+// Type is Real
+func NewValues(length int) Values {
+	newValues := new(values)
+	newValues.vals = make([]Value, length)
+	newValues.length = length
+	newValues.coreType = Real
+	return newValues
 }
 
 // MakeValuesAlt returns a Values type, but requires a framework []Value slice
@@ -117,4 +141,9 @@ func MakeValues(vals ...interface{}) Values {
 		values = append(values, MakeValue(val))
 	}
 	return MakeValuesAlt(values)
+}
+
+// RetrieveValues returns a copy of the []Value of vals Values
+func RetrieveValues(vals Values) []Value {
+	return vals.Copy().values()
 }

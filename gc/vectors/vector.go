@@ -136,12 +136,7 @@ func NewVector(space Space, length int) Vector {
 	vector := new(vector)
 	vector.space = space
 	vector.coreType = gcv.Real
-	elements := make([]interface{}, length)
-	for index := range elements {
-		val := gcv.NewValue()
-		elements[index] = val
-	}
-	vector.elements = gcv.MakeValues(elements...)
+	vector.elements = gcv.NewValues(length)
 	return vector
 }
 
