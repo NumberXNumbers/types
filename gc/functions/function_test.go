@@ -209,6 +209,26 @@ func TestFn15(t *testing.T) {
 	}
 }
 
+func TestFn16(t *testing.T) {
+	x := NewVar(Value)
+	matA := m.NewIdentityMatrix(2)
+	val := 1 + 3i
+	regVars := []Var{x}
+	functionA := MakeFunc(regVars, "Conj", x, "*", matA, "^", 2)
+	matrixSolutionA := functionA.MustEval(val)
+	if matrixSolutionA.Matrix().Get(0, 0).Complex() != 1-3i {
+		t.Fail()
+	}
+
+	matB := matA.Trim(0, 0, 1, 0)
+
+	functionB := MakeFunc(regVars, "Conj", x, "*", matB, "^", 2)
+	_, err := functionB.Eval(val)
+	if err == nil {
+		t.Fail()
+	}
+}
+
 func TestMustCalculateA(t *testing.T) {
 	matrixA := m.NewIdentityMatrix(3)
 	matrixB := m.NewIdentityMatrix(3)
