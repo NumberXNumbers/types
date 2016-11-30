@@ -3,6 +3,7 @@ package functions
 import (
 	"fmt"
 	"math"
+	"math/cmplx"
 	"testing"
 
 	m "github.com/NumberXNumbers/types/gc/matrices"
@@ -25,7 +26,7 @@ func TestFn1(t *testing.T) {
 	y := NewVar(Value)
 	regVars := []Var{x, y}
 	constant := MakeConst(0)
-	function := MakeFunc(regVars, MakeConst(4), "+", 5, "-", y, "*", MakeConst(3), "/", MakeConst(7), "+", x, "+", MakeConst(constant))
+	function := MakeFunc(regVars, MakeConst(4), "+", 5, "-", y, "*", MakeConst(3), "/", MakeConst(7), "+", x, "+", MakeConst(constant), "+", MakeConst("0"))
 	value := function.MustEval(4, 3)
 	if value.Value().Real() != 11.714285714285715 {
 		t.Fail()
@@ -213,6 +214,7 @@ func TestFn16(t *testing.T) {
 	x := NewVar(Value)
 	matA := m.NewIdentityMatrix(2)
 	val := 1 + 3i
+	vect := v.NewVector(v.RowSpace, 2)
 	regVars := []Var{x}
 	functionA := MakeFunc(regVars, "Conj", x, "*", matA, "^", 2)
 	matrixSolutionA := functionA.MustEval(val)
@@ -227,6 +229,42 @@ func TestFn16(t *testing.T) {
 	if err == nil {
 		t.Fail()
 	}
+
+	functionC := MakeFunc(regVars, "Conj", vect, "*", "Conj", matA)
+	matrixSolutionC := functionC.MustEval(val)
+	if matrixSolutionC.Vector().Get(0).Complex() != 0 || matrixSolutionC.Vector().Get(1).Complex() != 0 {
+		t.Fail()
+	}
+}
+
+func TestFn17(t *testing.T) {
+	x := NewVar(Value)
+	val := 1
+	regVarsA := []Var{x}
+	functionA := MakeFunc(regVarsA, "Atan", x)
+	solutionA := functionA.MustEval(val)
+	if cmplx.Abs(solutionA.Value().Complex()-0.78539816) > 10e-6 {
+		t.Fail()
+	}
+
+	functionB := MakeFunc(regVarsA, "Asin", x)
+	solutionB := functionB.MustEval(val)
+	if cmplx.Abs(solutionB.Value().Complex()-1.570796326) > 10e-6 {
+		t.Fail()
+	}
+
+	functionC := MakeFunc(regVarsA, "Acos", x)
+	solutionC := functionC.MustEval(val)
+	if cmplx.Abs(solutionC.Value().Complex()-0) > 10e-6 {
+		t.Fail()
+	}
+
+	functionD := MakeFunc(regVarsA, "Tan", x)
+	solutionD := functionD.MustEval(val)
+	if cmplx.Abs(solutionD.Value().Complex()-1.557407724) > 10e-6 {
+		t.Fail()
+	}
+
 }
 
 func TestMustCalculateA(t *testing.T) {
@@ -639,6 +677,25 @@ func TestPanicBadSqrt(t *testing.T) {
 	}
 }
 
+func TestPanicBadConj(t *testing.T) {
+	v1 := &constant{
+		Constant,
+		gcv.NewValue(),
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Recovered from %v error\n", r)
+		}
+	}()
+
+	solution := MustConj(v1)
+
+	if solution != nil {
+		t.Error("Expected Panic")
+	}
+}
+
 func TestPanicBadSin(t *testing.T) {
 	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
 
@@ -665,6 +722,70 @@ func TestPanicBadCos(t *testing.T) {
 	}()
 
 	solution := MustCos(v1)
+
+	if solution != nil {
+		t.Error("Expected Panic")
+	}
+}
+
+func TestPanicBadTan(t *testing.T) {
+	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Recovered from %v error\n", r)
+		}
+	}()
+
+	solution := MustTan(v1)
+
+	if solution != nil {
+		t.Error("Expected Panic")
+	}
+}
+
+func TestPanicBadAtan(t *testing.T) {
+	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Recovered from %v error\n", r)
+		}
+	}()
+
+	solution := MustAtan(v1)
+
+	if solution != nil {
+		t.Error("Expected Panic")
+	}
+}
+
+func TestPanicBadAcos(t *testing.T) {
+	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Recovered from %v error\n", r)
+		}
+	}()
+
+	solution := MustAcos(v1)
+
+	if solution != nil {
+		t.Error("Expected Panic")
+	}
+}
+
+func TestPanicBadAsin(t *testing.T) {
+	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Recovered from %v error\n", r)
+		}
+	}()
+
+	solution := MustAsin(v1)
 
 	if solution != nil {
 		t.Error("Expected Panic")

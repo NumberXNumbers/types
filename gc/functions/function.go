@@ -18,6 +18,10 @@ var (
 		"Sqrt": Sqrt,
 		"Cos":  Cos,
 		"Conj": Conj,
+		"Tan":  Tan,
+		"Atan": Atan,
+		"Acos": Acos,
+		"Asin": Asin,
 	}
 	binaryFuncs = map[string]func(Const, Const) (Const, error){
 		"+": Add,
