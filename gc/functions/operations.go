@@ -258,3 +258,71 @@ func MustCos(constant Const) Const {
 	}
 	return con
 }
+
+// Tan will find the tangent of a Const
+func Tan(constant Const) (Const, error) {
+	if constant.Type() == Value {
+		return MakeConst(gcvops.Tan(constant.Value())), nil
+	}
+	return nil, errors.New("Const Type is not supported for Tan")
+}
+
+// MustTan is the same as Tan but will panic
+func MustTan(constant Const) Const {
+	con, err := Tan(constant)
+	if err != nil {
+		panic(err)
+	}
+	return con
+}
+
+// Asin will find the arcsine of a Const
+func Asin(constant Const) (Const, error) {
+	if constant.Type() == Value {
+		return MakeConst(gcvops.Asin(constant.Value())), nil
+	}
+	return nil, errors.New("Const Type is not supported for Asin")
+}
+
+// MustAsin is the same as Asin but will panic
+func MustAsin(constant Const) Const {
+	con, err := Asin(constant)
+	if err != nil {
+		panic(err)
+	}
+	return con
+}
+
+// Acos will find the arccosine of a Const
+func Acos(constant Const) (Const, error) {
+	if constant.Type() == Value {
+		return MakeConst(gcvops.Acos(constant.Value())), nil
+	}
+	return nil, errors.New("Const Type is not supported for Acos")
+}
+
+// MustAcos is the same as Acos but will panic
+func MustAcos(constant Const) Const {
+	con, err := Acos(constant)
+	if err != nil {
+		panic(err)
+	}
+	return con
+}
+
+// Atan will find the arctangent of a Const
+func Atan(constant Const) (Const, error) {
+	if constant.Type() == Value {
+		return MakeConst(gcvops.Atan(constant.Value())), nil
+	}
+	return nil, errors.New("Const Type is not supported for Atan")
+}
+
+// MustAtan is the same as Atan but will panic
+func MustAtan(constant Const) Const {
+	con, err := Atan(constant)
+	if err != nil {
+		panic(err)
+	}
+	return con
+}

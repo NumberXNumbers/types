@@ -73,6 +73,8 @@ func (c *constant) Value() gcv.Value {
 func MakeConst(c interface{}) Const {
 	constant := new(constant)
 	switch c.(type) {
+	case Const:
+		return c.(Const)
 	case m.Matrix:
 		constant.constType = Matrix
 	case v.Vector:

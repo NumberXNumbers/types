@@ -183,7 +183,7 @@ func TestComplex(t *testing.T) {
 
 func TestMakeValuesNewValuesAndValues(t *testing.T) {
 	testValueA := MakeValue(0.5)
-	testValueB := MakeValue(0.6+0.4i)
+	testValueB := MakeValue(0.6 + 0.4i)
 	testValueC := NewValue()
 	testValuesA := MakeValues(testValueA, testValueB, testValueC)
 
