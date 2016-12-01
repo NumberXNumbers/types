@@ -1,6 +1,8 @@
-package functions
+package arguments
 
-import "fmt"
+import (
+	"fmt"
+)
 
 var (
 	varTypeMap = map[Type]string{
@@ -47,25 +49,4 @@ func NewVar(varType Type) Var {
 	variable := new(variable)
 	variable.varType = varType
 	return variable
-}
-
-// type constVar is for a variable that when eval is called,
-// will only return it's type Const it was assigned at creation of Var
-type constVar struct {
-	constant Const
-}
-
-func (c *constVar) Eval(x interface{}) (Const, error) {
-	return c.constant, nil
-}
-
-// MustEval is mostly just to make sure constVar meets requirements for Var interface
-func (c *constVar) MustEval(x interface{}) Const {
-	return c.constant
-}
-
-func newConstVar(c Const) Var {
-	constVar := new(constVar)
-	constVar.constant = c
-	return constVar
 }

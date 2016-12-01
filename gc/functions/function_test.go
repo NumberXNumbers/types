@@ -6,14 +6,15 @@ import (
 	"math/cmplx"
 	"testing"
 
+	args "github.com/NumberXNumbers/types/gc/functions/arguments"
 	m "github.com/NumberXNumbers/types/gc/matrices"
 	gcv "github.com/NumberXNumbers/types/gc/values"
 	v "github.com/NumberXNumbers/types/gc/vectors"
 )
 
 func TestFn0(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x}
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x}
 	function := MakeFunc(regVars, x)
 	value := function.MustEval(4)
 	if value.Value().Real() != 4 {
@@ -22,11 +23,11 @@ func TestFn0(t *testing.T) {
 }
 
 func TestFn1(t *testing.T) {
-	x := NewVar(Value)
-	y := NewVar(Value)
-	regVars := []Var{x, y}
-	constant := MakeConst(0)
-	function := MakeFunc(regVars, MakeConst(4), "+", 5, "-", y, "*", MakeConst(3), "/", MakeConst(7), "+", x, "+", MakeConst(constant), "+", MakeConst("0"))
+	x := args.NewVar(args.Value)
+	y := args.NewVar(args.Value)
+	regVars := []args.Var{x, y}
+	constant := args.MakeConst(0)
+	function := MakeFunc(regVars, args.MakeConst(4), "+", 5, "-", y, "*", args.MakeConst(3), "/", args.MakeConst(7), "+", x, "+", args.MakeConst(constant), "+", args.MakeConst("0"))
 	value := function.MustEval(4, 3)
 	if value.Value().Real() != 11.714285714285715 {
 		t.Fail()
@@ -34,12 +35,12 @@ func TestFn1(t *testing.T) {
 }
 
 func TestFn2(t *testing.T) {
-	x := NewVar(Value)
-	y := NewVar(Matrix)
-	regVars := []Var{x, y}
+	x := args.NewVar(args.Value)
+	y := args.NewVar(args.Matrix)
+	regVars := []args.Var{x, y}
 	vector := v.MakeVector(v.RowSpace, 2, 4, 6)
-	constVect := MakeConst(vector)
-	function := MakeFunc(regVars, constVect, "*", y, "*", x, "/", MakeConst(4))
+	constVect := args.MakeConst(vector)
+	function := MakeFunc(regVars, constVect, "*", y, "*", x, "/", args.MakeConst(4))
 	matrix := m.NewIdentityMatrix(3)
 	value := function.MustEval(2, matrix)
 	if value.Vector().Get(0).Real() != 1 ||
@@ -50,10 +51,10 @@ func TestFn2(t *testing.T) {
 }
 
 func TestFn3(t *testing.T) {
-	x := NewVar(Vector)
-	regVars := []Var{x}
+	x := args.NewVar(args.Vector)
+	regVars := []args.Var{x}
 	vector := v.MakeVector(v.RowSpace, 2, 4, 6)
-	function := MakeFunc(regVars, x, "+", "(", MakeConst(5), "*", x, ")")
+	function := MakeFunc(regVars, x, "+", "(", args.MakeConst(5), "*", x, ")")
 	value := function.MustEval(vector)
 	if value.Vector().Get(0).Real() != 12 ||
 		value.Vector().Get(1).Real() != 24 ||
@@ -63,16 +64,16 @@ func TestFn3(t *testing.T) {
 }
 
 func TestFn4(t *testing.T) {
-	x := NewVar(Matrix)
-	y := NewVar(Matrix)
-	a := NewVar(Vector)
-	b := NewVar(Vector)
-	regVars := []Var{x, y, a, b}
+	x := args.NewVar(args.Matrix)
+	y := args.NewVar(args.Matrix)
+	a := args.NewVar(args.Vector)
+	b := args.NewVar(args.Vector)
+	regVars := []args.Var{x, y, a, b}
 	matrixA := m.NewIdentityMatrix(3)
 	matrixB := m.NewIdentityMatrix(3)
 	vectorA := v.MakeVector(v.RowSpace, 2, 4, 6)
 	vectorB := v.MakeVector(v.RowSpace, 2, 4, 6)
-	function := MakeFunc(regVars, a, "*", "(", x, "+", "(", y, "*", MakeConst(2), "-", x, ")", "/", MakeConst(2), ")", "-", b, "/", MakeConst(2))
+	function := MakeFunc(regVars, a, "*", "(", x, "+", "(", y, "*", args.MakeConst(2), "-", x, ")", "/", args.MakeConst(2), ")", "-", b, "/", args.MakeConst(2))
 	value := function.MustEval(matrixA, matrixB, vectorA, vectorB)
 	if value.Vector().Get(0).Real() != 2 ||
 		value.Vector().Get(1).Real() != 4 ||
@@ -82,11 +83,11 @@ func TestFn4(t *testing.T) {
 }
 
 func TestFn5(t *testing.T) {
-	x := NewVar(Matrix)
-	y := NewVar(Matrix)
-	a := NewVar(Vector)
-	b := NewVar(Vector)
-	regVars := []Var{x, y, a, b}
+	x := args.NewVar(args.Matrix)
+	y := args.NewVar(args.Matrix)
+	a := args.NewVar(args.Vector)
+	b := args.NewVar(args.Vector)
+	regVars := []args.Var{x, y, a, b}
 	matrixA := m.NewIdentityMatrix(2)
 	matrixB := m.NewIdentityMatrix(2)
 	vectorA := v.MakeVector(v.RowSpace, 1, 0)
@@ -103,10 +104,10 @@ func TestFn5(t *testing.T) {
 }
 
 func TestFn6(t *testing.T) {
-	x := NewVar(Matrix)
-	y := NewVar(Matrix)
-	a := NewVar(Vector)
-	regVars := []Var{x, y, a}
+	x := args.NewVar(args.Matrix)
+	y := args.NewVar(args.Matrix)
+	a := args.NewVar(args.Vector)
+	regVars := []args.Var{x, y, a}
 	matrixA := m.NewIdentityMatrix(2)
 	matrixB := m.NewIdentityMatrix(2)
 	vectorA := v.MakeVector(v.ColSpace, 1, 0)
@@ -119,8 +120,8 @@ func TestFn6(t *testing.T) {
 }
 
 func TestFn7(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x}
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x}
 	function := MakeFunc(regVars, "Sin", "(", x, ")")
 	value := function.MustEval(math.Pi)
 	if value.Value().Real() >= 10e-15 {
@@ -129,8 +130,8 @@ func TestFn7(t *testing.T) {
 }
 
 func TestFn8(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x}
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x}
 	function := MakeFunc(regVars, "Sin", x)
 	value := function.MustEval(math.Pi)
 	if value.Value().Real() >= 10e-15 {
@@ -139,8 +140,8 @@ func TestFn8(t *testing.T) {
 }
 
 func TestFn9(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x}
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x}
 	function := MakeFunc(regVars, x, "*", "Sin", "(", x, ")", "+", x)
 	// fmt.Println(function.args)
 	// fmt.Println(function.inputTypes)
@@ -151,8 +152,8 @@ func TestFn9(t *testing.T) {
 }
 
 func TestFn10(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x}
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x}
 	function := MakeFunc(regVars, "Sqrt", "(", x, "^", x, ")")
 	value := function.MustEval(2)
 	if math.Abs(value.Value().Real()-2) > 10e-15 {
@@ -161,8 +162,8 @@ func TestFn10(t *testing.T) {
 }
 
 func TestFn11(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x}
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x}
 	function := MakeFunc(regVars, "Cos", "(", x, ")", "*", "Sin", "(", x, ")")
 	value := function.MustEval(math.Pi / 4)
 	if math.Abs(value.Value().Real()-0.5000000) > 10e-15 {
@@ -171,8 +172,8 @@ func TestFn11(t *testing.T) {
 }
 
 func TestFn12(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x}
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x}
 	function := MakeFunc(regVars, "Cos", "(", "Sin", "(", x, ")", ")")
 	value := function.MustEval(math.Pi / 4)
 	if math.Abs(value.Value().Real()-0.760244) > 10e-6 {
@@ -181,8 +182,8 @@ func TestFn12(t *testing.T) {
 }
 
 func TestFn13(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x}
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x}
 	function := MakeFunc(regVars, "Cos", "Sin", x)
 	value := function.MustEval(math.Pi / 4)
 	if math.Abs(value.Value().Real()-0.760244) > 10e-6 {
@@ -191,8 +192,8 @@ func TestFn13(t *testing.T) {
 }
 
 func TestFn14(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x}
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x}
 	function := MakeFunc(regVars, x, pow, "Sin", math.Pi/2, pow, x)
 	value := function.MustEval(2)
 	if math.Abs(value.Value().Real()-2) > 10e-6 {
@@ -201,8 +202,8 @@ func TestFn14(t *testing.T) {
 }
 
 func TestFn15(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x}
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x}
 	function := MakeFunc(regVars, x, pow, 3, pow, x)
 	value := function.MustEval(2)
 	if math.Abs(value.Value().Real()-512) > 10e-6 {
@@ -211,11 +212,11 @@ func TestFn15(t *testing.T) {
 }
 
 func TestFn16(t *testing.T) {
-	x := NewVar(Value)
+	x := args.NewVar(args.Value)
 	matA := m.NewIdentityMatrix(2)
 	val := 1 + 3i
 	vect := v.NewVector(v.RowSpace, 2)
-	regVars := []Var{x}
+	regVars := []args.Var{x}
 	functionA := MakeFunc(regVars, "Conj", x, "*", matA, "^", 2)
 	matrixSolutionA := functionA.MustEval(val)
 	if matrixSolutionA.Matrix().Get(0, 0).Complex() != 1-3i {
@@ -238,9 +239,9 @@ func TestFn16(t *testing.T) {
 }
 
 func TestFn17(t *testing.T) {
-	x := NewVar(Value)
+	x := args.NewVar(args.Value)
 	val := 1
-	regVarsA := []Var{x}
+	regVarsA := []args.Var{x}
 	functionA := MakeFunc(regVarsA, "Atan", x)
 	solutionA := functionA.MustEval(val)
 	if cmplx.Abs(solutionA.Value().Complex()-0.78539816) > 10e-6 {
@@ -272,7 +273,7 @@ func TestMustCalculateA(t *testing.T) {
 	matrixB := m.NewIdentityMatrix(3)
 	vectorA := v.MakeVector(v.RowSpace, 2, 4, 6)
 	vectorB := v.MakeVector(v.RowSpace, 2, 4, 6)
-	calculation := MustCalculate(vectorA, "*", "(", matrixA, "+", "(", matrixB, "*", MakeConst(2), "-", matrixA, ")", "/", 2, ")", "-", vectorB, "/", gcv.MakeValue(2))
+	calculation := MustCalculate(vectorA, "*", "(", matrixA, "+", "(", matrixB, "*", args.MakeConst(2), "-", matrixA, ")", "/", 2, ")", "-", vectorB, "/", gcv.MakeValue(2))
 	if calculation.Vector().Get(0).Real() != 2 ||
 		calculation.Vector().Get(1).Real() != 4 ||
 		calculation.Vector().Get(2).Real() != 6 {
@@ -282,7 +283,7 @@ func TestMustCalculateA(t *testing.T) {
 
 func TestMustCalculateB(t *testing.T) {
 	vectorB := v.MakeVector(v.RowSpace, 2, 4, 6)
-	calculation := MustCalculate("(", MakeConst(2), ")", "*", vectorB)
+	calculation := MustCalculate("(", args.MakeConst(2), ")", "*", vectorB)
 	if calculation.Vector().Get(0).Real() != 4 ||
 		calculation.Vector().Get(1).Real() != 8 ||
 		calculation.Vector().Get(2).Real() != 12 {
@@ -364,8 +365,8 @@ func TestFunctionPanicOperatorNotSupported(t *testing.T) {
 		}
 	}()
 
-	regVars := []Var{}
-	function := MakeFunc(regVars, "(", MakeConst(2), ")", "=", vectorB)
+	regVars := []args.Var{}
+	function := MakeFunc(regVars, "(", args.MakeConst(2), ")", "=", vectorB)
 
 	value := function.MustEval()
 
@@ -383,8 +384,8 @@ func TestFunctionPanicOperatorParensMismatch(t *testing.T) {
 		}
 	}()
 
-	regVars := []Var{}
-	function := MakeFunc(regVars, 2, "+", MakeConst(2), ")", "+", vectorB)
+	regVars := []args.Var{}
+	function := MakeFunc(regVars, 2, "+", args.MakeConst(2), ")", "+", vectorB)
 
 	value := function.MustEval()
 
@@ -402,7 +403,7 @@ func TestMustCalculatePanicOperatorsOperandMismatch(t *testing.T) {
 		}
 	}()
 
-	calculation := MustCalculate("(", MakeConst(2), ")", ")", "*", vectorB)
+	calculation := MustCalculate("(", args.MakeConst(2), ")", ")", "*", vectorB)
 
 	if calculation != nil {
 		t.Error("Expected Panic")
@@ -418,7 +419,7 @@ func TestMustCalculatePanicOperatorParensMismatch(t *testing.T) {
 		}
 	}()
 
-	calculation := MustCalculate(2, "+", MakeConst(2), ")", "+", vectorB)
+	calculation := MustCalculate(2, "+", args.MakeConst(2), ")", "+", vectorB)
 
 	if calculation.Value() != nil {
 		t.Error("Expected Panic")
@@ -426,7 +427,7 @@ func TestMustCalculatePanicOperatorParensMismatch(t *testing.T) {
 }
 
 func TestMustCalculatePanicUnsupportedType(t *testing.T) {
-	vectorB := NewVar(Vector)
+	vectorB := args.NewVar(args.Vector)
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -434,438 +435,23 @@ func TestMustCalculatePanicUnsupportedType(t *testing.T) {
 		}
 	}()
 
-	calculation := MustCalculate("(", MakeConst(2), ")", "*", vectorB)
+	calculation := MustCalculate("(", args.MakeConst(2), ")", "*", vectorB)
 
 	if calculation != nil {
 		t.Error("Expected Panic")
 	}
 }
 
-func TestPanicAddVector(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-	v2 := MakeConst(v.NewVector(v.ColSpace, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solutionV := MustAdd(v1, v2)
-
-	if solutionV != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicAddMatrix(t *testing.T) {
-	m1 := MakeConst(m.NewMatrix(2, 2))
-	m2 := MakeConst(m.NewMatrix(3, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solutionM := MustAdd(m1, m2)
-
-	if solutionM != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicAddMismatch(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-	m2 := MakeConst(m.NewMatrix(3, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustAdd(v1, m2)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicSubVector(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-	v2 := MakeConst(v.NewVector(v.ColSpace, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solutionV := MustSub(v1, v2)
-
-	if solutionV != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicSubMatrix(t *testing.T) {
-	m1 := MakeConst(m.NewMatrix(2, 2))
-	m2 := MakeConst(m.NewMatrix(3, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solutionM := MustSub(m1, m2)
-
-	if solutionM != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicSubMismatch(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-	m2 := MakeConst(m.NewMatrix(3, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustSub(v1, m2)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicDivMismatch(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-	m2 := MakeConst(m.NewMatrix(3, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustDiv(v1, m2)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicMultDoubleRowVector(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-	v2 := MakeConst(v.NewVector(v.RowSpace, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustMult(v1, v2)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicMultDoubleColVector(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.ColSpace, 3))
-	v2 := MakeConst(v.NewVector(v.ColSpace, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustMult(v1, v2)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicMultVM(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.ColSpace, 3))
-	m2 := MakeConst(m.NewMatrix(3, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustMult(v1, m2)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicMultMV(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-	m2 := MakeConst(m.NewMatrix(3, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustMult(m2, v1)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicMultMatrix(t *testing.T) {
-	m1 := MakeConst(m.NewMatrix(2, 2))
-	m2 := MakeConst(m.NewMatrix(3, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustMult(m1, m2)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicBadPow(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustPow(v1, v1)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicBadSqrt(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustSqrt(v1)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicBadConj(t *testing.T) {
-	v1 := &constant{
-		Constant,
-		gcv.NewValue(),
-	}
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustConj(v1)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicBadSin(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustSin(v1)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicBadCos(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustCos(v1)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicBadTan(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustTan(v1)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicBadAtan(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustAtan(v1)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicBadAcos(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustAcos(v1)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicBadAsin(t *testing.T) {
-	v1 := MakeConst(v.NewVector(v.RowSpace, 3))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := MustAsin(v1)
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicBadValue(t *testing.T) {
-	v := MakeConst(m.NewMatrix(2, 2))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := v.Value()
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicBadVector(t *testing.T) {
-	v := MakeConst(m.NewMatrix(2, 2))
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := v.Vector()
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicBadMatrix(t *testing.T) {
-	m := MakeConst(gcv.NewValue())
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := m.Matrix()
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
-func TestPanicBadVariable(t *testing.T) {
-	m := NewVar(Matrix)
-
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from %v error\n", r)
-		}
-	}()
-
-	solution := m.MustEval(gcv.NewValue())
-
-	if solution != nil {
-		t.Error("Expected Panic")
-	}
-}
-
 func TestPanicDuplicateRegVarsForFunc(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x, x}
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x, x}
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("Recovered from %v error\n", r)
 		}
 	}()
 
-	function := MakeFunc(regVars, MakeConst(4), "+", MakeConst(5))
+	function := MakeFunc(regVars, args.MakeConst(4), "+", args.MakeConst(5))
 
 	if function != nil {
 		t.Error("Expected Panic")
@@ -874,9 +460,9 @@ func TestPanicDuplicateRegVarsForFunc(t *testing.T) {
 }
 
 func TestPanicNotRegVarsForFunc(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x}
-	y := NewVar(Value)
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x}
+	y := args.NewVar(args.Value)
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("Recovered from %v error\n", r)
@@ -893,7 +479,7 @@ func TestPanicNotRegVarsForFunc(t *testing.T) {
 
 func TestPanicNotSupportedTypeForFunc(t *testing.T) {
 	x := uint(2)
-	regVars := []Var{}
+	regVars := []args.Var{}
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("Recovered from %v error\n", r)
@@ -909,8 +495,8 @@ func TestPanicNotSupportedTypeForFunc(t *testing.T) {
 }
 
 func TestPanicNotEnoughArgsFunc(t *testing.T) {
-	x := NewVar(Matrix)
-	regVars := []Var{x}
+	x := args.NewVar(args.Matrix)
+	regVars := []args.Var{x}
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("Recovered from %v error\n", r)
@@ -927,8 +513,8 @@ func TestPanicNotEnoughArgsFunc(t *testing.T) {
 }
 
 func TestPanicBadgetOpFunc(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x}
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x}
 
 	function := MakeFunc(regVars, x)
 
@@ -940,8 +526,8 @@ func TestPanicBadgetOpFunc(t *testing.T) {
 }
 
 func TestPanicBadgetVarFunc(t *testing.T) {
-	x := NewVar(Value)
-	regVars := []Var{x}
+	x := args.NewVar(args.Value)
+	regVars := []args.Var{x}
 
 	function := MakeFunc(regVars, x, "+", x)
 

@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 
+	args "github.com/NumberXNumbers/types/gc/functions/arguments"
+	"github.com/NumberXNumbers/types/gc/functions/ops"
 	m "github.com/NumberXNumbers/types/gc/matrices"
 	gcv "github.com/NumberXNumbers/types/gc/values"
 	v "github.com/NumberXNumbers/types/gc/vectors"
@@ -13,22 +15,28 @@ var (
 	leftParen  = "("
 	rightParen = ")"
 	pow        = "^"
-	unaryFuncs = map[string]func(Const) (Const, error){
-		"Sin":  Sin,
-		"Sqrt": Sqrt,
-		"Cos":  Cos,
-		"Conj": Conj,
-		"Tan":  Tan,
-		"Atan": Atan,
-		"Acos": Acos,
-		"Asin": Asin,
+	unaryFuncs = map[string]func(args.Const) (args.Const, error){
+		"Sqrt":  ops.Sqrt,
+		"Conj":  ops.Conj,
+		"Sin":   ops.Sin,
+		"Cos":   ops.Cos,
+		"Tan":   ops.Tan,
+		"Asin":  ops.Asin,
+		"Acos":  ops.Acos,
+		"Atan":  ops.Atan,
+		"Sinh":  ops.Sinh,
+		"Cosh":  ops.Cosh,
+		"Tanh":  ops.Tanh,
+		"Asinh": ops.Asinh,
+		"Acosh": ops.Acosh,
+		"Atanh": ops.Atanh,
 	}
-	binaryFuncs = map[string]func(Const, Const) (Const, error){
-		"+": Add,
-		"-": Sub,
-		"*": Mult,
-		"/": Div,
-		pow: Pow,
+	binaryFuncs = map[string]func(args.Const, args.Const) (args.Const, error){
+		"+": ops.Add,
+		"-": ops.Sub,
+		"*": ops.Mult,
+		"/": ops.Div,
+		pow: ops.Pow,
 	}
 	orderOfOperations = map[string]uint{
 		pow: 3,
@@ -41,45 +49,49 @@ var (
 
 // Function is the function type for GoCalculate
 type Function struct {
-	inputTypes map[int]Type
+	inputTypes map[int]args.Type
 	Args       []interface{}
-	varNum     map[Var]int
+	varNum     map[args.Var]int
 	numVars    int
-	regVars    []Var
+	regVars    []args.Var
 }
 
-func (f *Function) getVar(i int) (Var, error) {
-	if f.typeInput(i) == Constant {
-		return newConstVar(f.Args[i].(Const)), nil
-	} else if f.typeInput(i) == Variable {
-		return f.Args[i].(Var), nil
+func newConstVar(c args.Const) args.Var {
+	return c.(args.Var)
+}
+
+func (f *Function) getVar(i int) (args.Var, error) {
+	if f.typeInput(i) == args.Constant {
+		return newConstVar(f.Args[i].(args.Const)), nil
+	} else if f.typeInput(i) == args.Variable {
+		return f.Args[i].(args.Var), nil
 	}
 	return nil, fmt.Errorf("Index %d, is not of type Var or Const", i)
 }
 
 func (f *Function) getOp(i int) (string, error) {
-	if f.typeInput(i) == Operation {
+	if f.typeInput(i) == args.Operation {
 		return f.Args[i].(string), nil
 	}
 	return "", fmt.Errorf("Index %d, is not of type Operations", i)
 }
 
-func (f *Function) typeInput(x int) Type { return f.inputTypes[x] }
+func (f *Function) typeInput(x int) args.Type { return f.inputTypes[x] }
 
 // Eval will evaluate a function
-func (f *Function) Eval(inputs ...interface{}) (Const, error) {
+func (f *Function) Eval(inputs ...interface{}) (args.Const, error) {
 	lenInputs := len(inputs)
 	if lenInputs != f.numVars {
 		return nil, errors.New("Number of inputs is not equal to the number of variables in function")
 	}
 
-	var operand1 Const
-	var operand2 Const
-	var operandStack []Const
+	var operand1 args.Const
+	var operand2 args.Const
+	var operandStack []args.Const
 
 	i := 0
 	for i < len(f.Args) {
-		if f.typeInput(i) == Constant || f.typeInput(i) == Variable {
+		if f.typeInput(i) == args.Constant || f.typeInput(i) == args.Variable {
 			variable, err := f.getVar(i)
 			if err != nil {
 				return nil, err
@@ -98,7 +110,7 @@ func (f *Function) Eval(inputs ...interface{}) (Const, error) {
 				// to MustEval as it will never fail as the input does not matter for constants
 				operandStack = append(operandStack, variable.MustEval(0))
 			}
-		} else if f.typeInput(i) == Operation {
+		} else if f.typeInput(i) == args.Operation {
 			operation, err := f.getOp(i)
 			if err != nil {
 				return nil, err
@@ -144,7 +156,7 @@ func (f *Function) Eval(inputs ...interface{}) (Const, error) {
 }
 
 // MustEval is like Eval but will panic
-func (f *Function) MustEval(inputs ...interface{}) Const {
+func (f *Function) MustEval(inputs ...interface{}) args.Const {
 	constant, err := f.Eval(inputs...)
 	if err != nil {
 		panic(err)
@@ -154,11 +166,11 @@ func (f *Function) MustEval(inputs ...interface{}) Const {
 
 // MakeFunc will make a gcf function struct.
 // Will panic is there are errors
-func MakeFunc(regVars []Var, inputs ...interface{}) *Function {
+func MakeFunc(regVars []args.Var, inputs ...interface{}) *Function {
 	function := new(Function)
 
 	function.regVars = regVars
-	var varNum = make(map[Var]int)
+	var varNum = make(map[args.Var]int)
 	var numVars int
 	var tempOpsStack []string
 	var postfixStack []interface{}
@@ -171,7 +183,7 @@ func MakeFunc(regVars []Var, inputs ...interface{}) *Function {
 		e := fmt.Sprintf("Error registering variables. Variable at index %d, is a duplicate", i)
 		panic(e)
 	}
-	var inputType = make(map[int]Type)
+	var inputType = make(map[int]args.Type)
 	for i, n := range inputs {
 		topIndexInPostfixStack := len(postfixStack) - 1
 		switch n.(type) {
@@ -194,7 +206,7 @@ func MakeFunc(regVars []Var, inputs ...interface{}) *Function {
 						tempOpsStack = tempOpsStack[:topIndexInTempOpsStack]
 						finishComparing = true
 					} else {
-						inputType[topIndexInPostfixStack+1] = Operation
+						inputType[topIndexInPostfixStack+1] = args.Operation
 						postfixStack, tempOpsStack = append(postfixStack, topOperationInTempOpsStack), tempOpsStack[:topIndexInTempOpsStack]
 					}
 					topIndexInTempOpsStack = len(tempOpsStack) - 1
@@ -226,12 +238,12 @@ func MakeFunc(regVars []Var, inputs ...interface{}) *Function {
 								tempOpsStack = append(tempOpsStack, operation)
 								finishComparing = true
 							} else {
-								inputType[topIndexInPostfixStack+1] = Operation
+								inputType[topIndexInPostfixStack+1] = args.Operation
 								postfixStack, tempOpsStack = append(postfixStack, topOperationInTempOpsStack), tempOpsStack[:topIndexInTempOpsStack]
 								topIndexInTempOpsStack = len(tempOpsStack) - 1
 							}
 						} else if orderOfOperations[operation] < orderOfOperations[topOperationInTempOpsStack] || isPreviousUnary {
-							inputType[topIndexInPostfixStack+1] = Operation
+							inputType[topIndexInPostfixStack+1] = args.Operation
 							postfixStack, tempOpsStack = append(postfixStack, topOperationInTempOpsStack), tempOpsStack[:topIndexInTempOpsStack]
 							topIndexInTempOpsStack = len(tempOpsStack) - 1
 						}
@@ -253,25 +265,25 @@ func MakeFunc(regVars []Var, inputs ...interface{}) *Function {
 					if operation == pow {
 						tempOpsStack = append(tempOpsStack, operation)
 					} else {
-						inputType[topIndexInPostfixStack+1] = Operation
+						inputType[topIndexInPostfixStack+1] = args.Operation
 						postfixStack, tempOpsStack = append(postfixStack, topOperationInTempOpsStack), tempOpsStack[:topIndexInTempOpsStack]
 						tempOpsStack = append(tempOpsStack, operation)
 					}
 				}
 			}
 		case int, int32, int64, float32, float64, complex64, complex128, gcv.Value, v.Vector, m.Matrix:
-			postfixStack = append(postfixStack, MakeConst(inputs[i]))
-			inputType[topIndexInPostfixStack+1] = Constant
-		case Const:
+			postfixStack = append(postfixStack, args.MakeConst(inputs[i]))
+			inputType[topIndexInPostfixStack+1] = args.Constant
+		case args.Const:
 			postfixStack = append(postfixStack, n)
-			inputType[topIndexInPostfixStack+1] = Constant
-		case Var:
-			if _, ok := varNum[n.(Var)]; !ok {
+			inputType[topIndexInPostfixStack+1] = args.Constant
+		case args.Var:
+			if _, ok := varNum[n.(args.Var)]; !ok {
 				e := fmt.Sprintf("Variable at index %d, was not registered", i)
 				panic(e)
 			}
 			postfixStack = append(postfixStack, n)
-			inputType[topIndexInPostfixStack+1] = Variable
+			inputType[topIndexInPostfixStack+1] = args.Variable
 		default:
 			panic("Input type not supported")
 		}
@@ -285,7 +297,7 @@ func MakeFunc(regVars []Var, inputs ...interface{}) *Function {
 		if operation == "(" {
 			panic("Mismatch of Parentheses found")
 		}
-		inputType[topIndexInPostfixStack+1] = Operation
+		inputType[topIndexInPostfixStack+1] = args.Operation
 		postfixStack = append(postfixStack, operation)
 	}
 
