@@ -10,6 +10,28 @@ import (
 	v "github.com/NumberXNumbers/types/gc/vectors"
 )
 
+func TestAdd(t *testing.T) {
+	solutionA := MustAdd(args.MakeConst(4), args.MakeConst(3))
+	if solutionA.Value().Complex() != 7 {
+		t.Fail()
+	}
+
+	solutionB := MustAdd(args.MakeConst(v.NewVector(v.RowSpace, 3)), args.MakeConst(v.MakeVector(v.RowSpace, 1, 2, 3)))
+	if solutionB.Vector().Get(0).Complex() != 1 ||
+		solutionB.Vector().Get(1).Complex() != 2 ||
+		solutionB.Vector().Get(2).Complex() != 3 {
+		t.Fail()
+	}
+
+	solutionC := MustAdd(args.MakeConst(m.NewMatrix(2, 2)), args.MakeConst(m.NewIdentityMatrix(2)))
+	if solutionC.Matrix().Get(0, 0).Complex() != 1 ||
+		solutionC.Matrix().Get(1, 1).Complex() != 1 ||
+		solutionC.Matrix().Get(0, 1).Complex() != 0 ||
+		solutionC.Matrix().Get(1, 0).Complex() != 0 {
+		t.Fail()
+	}
+}
+
 func TestPanicAddVector(t *testing.T) {
 	v1 := args.MakeConst(v.NewVector(v.RowSpace, 3))
 	v2 := args.MakeConst(v.NewVector(v.ColSpace, 3))
@@ -58,6 +80,28 @@ func TestPanicAddMismatch(t *testing.T) {
 
 	if solution != nil {
 		t.Error("Expected Panic")
+	}
+}
+
+func TestSub(t *testing.T) {
+	solutionA := MustSub(args.MakeConst(4), args.MakeConst(3))
+	if solutionA.Value().Complex() != 1 {
+		t.Fail()
+	}
+
+	solutionB := MustSub(args.MakeConst(v.NewVector(v.RowSpace, 3)), args.MakeConst(v.MakeVector(v.RowSpace, 1, 2, 3)))
+	if solutionB.Vector().Get(0).Complex() != -1 ||
+		solutionB.Vector().Get(1).Complex() != -2 ||
+		solutionB.Vector().Get(2).Complex() != -3 {
+		t.Fail()
+	}
+
+	solutionC := MustSub(args.MakeConst(m.NewMatrix(2, 2)), args.MakeConst(m.NewIdentityMatrix(2)))
+	if solutionC.Matrix().Get(0, 0).Complex() != -1 ||
+		solutionC.Matrix().Get(1, 1).Complex() != -1 ||
+		solutionC.Matrix().Get(0, 1).Complex() != 0 ||
+		solutionC.Matrix().Get(1, 0).Complex() != 0 {
+		t.Fail()
 	}
 }
 
@@ -112,6 +156,28 @@ func TestPanicSubMismatch(t *testing.T) {
 	}
 }
 
+func TestDiv(t *testing.T) {
+	solutionA := MustDiv(args.MakeConst(3), args.MakeConst(3))
+	if solutionA.Value().Complex() != 1 {
+		t.Fail()
+	}
+
+	solutionB := MustDiv(args.MakeConst(v.MakeVector(v.RowSpace, 4, 2, 4)), args.MakeConst(2))
+	if solutionB.Vector().Get(0).Complex() != 2 ||
+		solutionB.Vector().Get(1).Complex() != 1 ||
+		solutionB.Vector().Get(2).Complex() != 2 {
+		t.Fail()
+	}
+
+	solutionC := MustDiv(args.MakeConst(m.NewIdentityMatrix(2)), args.MakeConst(2))
+	if solutionC.Matrix().Get(0, 0).Complex() != 0.5 ||
+		solutionC.Matrix().Get(1, 1).Complex() != 0.5 ||
+		solutionC.Matrix().Get(0, 1).Complex() != 0 ||
+		solutionC.Matrix().Get(1, 0).Complex() != 0 {
+		t.Fail()
+	}
+}
+
 func TestPanicDivMismatch(t *testing.T) {
 	v1 := args.MakeConst(v.NewVector(v.RowSpace, 3))
 	m2 := args.MakeConst(m.NewMatrix(3, 3))
@@ -126,6 +192,43 @@ func TestPanicDivMismatch(t *testing.T) {
 
 	if solution != nil {
 		t.Error("Expected Panic")
+	}
+}
+
+func TestMult(t *testing.T) {
+	solutionA := MustMult(args.MakeConst(3), args.MakeConst(3))
+	if solutionA.Value().Complex() != 9 {
+		t.Fail()
+	}
+
+	solutionB := MustMult(args.MakeConst(v.MakeVector(v.RowSpace, 4, 2, 4)), args.MakeConst(2))
+	if solutionB.Vector().Get(0).Complex() != 8 ||
+		solutionB.Vector().Get(1).Complex() != 4 ||
+		solutionB.Vector().Get(2).Complex() != 8 {
+		t.Fail()
+	}
+
+	solutionC := MustMult(args.MakeConst(m.NewIdentityMatrix(2)), args.MakeConst(2))
+	if solutionC.Matrix().Get(0, 0).Complex() != 2 ||
+		solutionC.Matrix().Get(1, 1).Complex() != 2 ||
+		solutionC.Matrix().Get(0, 1).Complex() != 0 ||
+		solutionC.Matrix().Get(1, 0).Complex() != 0 {
+		t.Fail()
+	}
+
+	solutionD := MustMult(args.MakeConst(2), args.MakeConst(v.MakeVector(v.RowSpace, 4, 2, 4)))
+	if solutionD.Vector().Get(0).Complex() != 8 ||
+		solutionD.Vector().Get(1).Complex() != 4 ||
+		solutionD.Vector().Get(2).Complex() != 8 {
+		t.Fail()
+	}
+
+	solutionE := MustMult(args.MakeConst(2), args.MakeConst(m.NewIdentityMatrix(2)))
+	if solutionE.Matrix().Get(0, 0).Complex() != 2 ||
+		solutionE.Matrix().Get(1, 1).Complex() != 2 ||
+		solutionE.Matrix().Get(0, 1).Complex() != 0 ||
+		solutionE.Matrix().Get(1, 0).Complex() != 0 {
+		t.Fail()
 	}
 }
 
@@ -214,7 +317,39 @@ func TestPanicMultMatrix(t *testing.T) {
 	}
 }
 
-func TestPanicBadPow(t *testing.T) {
+func TestPow(t *testing.T) {
+	solutionA := MustPow(args.MakeConst(3), args.MakeConst(3))
+	if solutionA.Value().Complex() != 27 {
+		t.Fail()
+	}
+
+	solutionC := MustPow(args.MakeConst(m.NewIdentityMatrix(2)), args.MakeConst(2))
+	if solutionC.Matrix().Get(0, 0).Complex() != 1 ||
+		solutionC.Matrix().Get(1, 1).Complex() != 1 ||
+		solutionC.Matrix().Get(0, 1).Complex() != 0 ||
+		solutionC.Matrix().Get(1, 0).Complex() != 0 {
+		t.Fail()
+	}
+}
+
+func TestPanicBadPowMatrix(t *testing.T) {
+	v1 := args.MakeConst(m.NewMatrix(2, 3))
+	v2 := args.MakeConst(2)
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Recovered from %v error\n", r)
+		}
+	}()
+
+	solution := MustPow(v1, v2)
+
+	if solution != nil {
+		t.Error("Expected Panic")
+	}
+}
+
+func TestPanicBadPowUnsupportedType(t *testing.T) {
 	v1 := args.MakeConst(v.NewVector(v.RowSpace, 3))
 
 	defer func() {
@@ -227,6 +362,13 @@ func TestPanicBadPow(t *testing.T) {
 
 	if solution != nil {
 		t.Error("Expected Panic")
+	}
+}
+
+func TestSqrt(t *testing.T) {
+	solutionA := MustSqrt(args.MakeConst(9))
+	if solutionA.Value().Complex() != 3 {
+		t.Fail()
 	}
 }
 

@@ -165,8 +165,8 @@ func (f *Function) MustEval(inputs ...interface{}) args.Const {
 }
 
 // MakeFunc will make a gcf function struct.
-// Will panic is there are errors
-func MakeFunc(regVars []args.Var, inputs ...interface{}) *Function {
+// Else error
+func MakeFunc(regVars []args.Var, inputs ...interface{}) (*Function, error) {
 	function := new(Function)
 
 	function.regVars = regVars
@@ -180,8 +180,8 @@ func MakeFunc(regVars []args.Var, inputs ...interface{}) *Function {
 			numVars++
 			continue
 		}
-		e := fmt.Sprintf("Error registering variables. Variable at index %d, is a duplicate", i)
-		panic(e)
+		return nil, fmt.Errorf("Error registering variables. Variable at index %d, is a duplicate", i)
+
 	}
 	var inputType = make(map[int]args.Type)
 	for i, n := range inputs {
@@ -199,7 +199,7 @@ func MakeFunc(regVars []args.Var, inputs ...interface{}) *Function {
 			} else if operation == rightParen {
 				for !finishComparing {
 					if len(tempOpsStack) == 0 {
-						panic("Mismatch of Parentheses found")
+						return nil, errors.New("Mismatch of Parentheses found")
 					}
 					topOperationInTempOpsStack := tempOpsStack[topIndexInTempOpsStack]
 					if topOperationInTempOpsStack == leftParen {
@@ -279,13 +279,13 @@ func MakeFunc(regVars []args.Var, inputs ...interface{}) *Function {
 			inputType[topIndexInPostfixStack+1] = args.Constant
 		case args.Var:
 			if _, ok := varNum[n.(args.Var)]; !ok {
-				e := fmt.Sprintf("Variable at index %d, was not registered", i)
-				panic(e)
+				return nil, fmt.Errorf("Variable at index %d, was not registered", i)
+
 			}
 			postfixStack = append(postfixStack, n)
 			inputType[topIndexInPostfixStack+1] = args.Variable
 		default:
-			panic("Input type not supported")
+			return nil, errors.New("Input type not supported")
 		}
 	}
 
@@ -295,7 +295,7 @@ func MakeFunc(regVars []args.Var, inputs ...interface{}) *Function {
 		var operation string
 		operation, tempOpsStack = tempOpsStack[topIndexInTempOpsStack], tempOpsStack[:topIndexInTempOpsStack]
 		if operation == "(" {
-			panic("Mismatch of Parentheses found")
+			return nil, errors.New("Mismatch of Parentheses found")
 		}
 		inputType[topIndexInPostfixStack+1] = args.Operation
 		postfixStack = append(postfixStack, operation)
@@ -305,5 +305,14 @@ func MakeFunc(regVars []args.Var, inputs ...interface{}) *Function {
 	function.numVars = numVars
 	function.varNum = varNum
 	function.Args = postfixStack
+	return function, nil
+}
+
+// MakeFuncPanic will the same as MakeFunc but will panic
+func MakeFuncPanic(regVars []args.Var, inputs ...interface{}) *Function {
+	function, err := MakeFunc(regVars, inputs...)
+	if err != nil {
+		panic(err)
+	}
 	return function
 }

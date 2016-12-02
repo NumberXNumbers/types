@@ -12,6 +12,8 @@ import (
 )
 
 // Add will add two constants together
+// For vectors, the two vectors need to be in the same space and size, else error.
+// For matrices, the two matrices need to be of the same size, else error.
 func Add(constA args.Const, constB args.Const) (args.Const, error) {
 	if constA.Type() == args.Value && constB.Type() == args.Value {
 		return args.MakeConst(gcvops.Add(constA.Value(), constB.Value())), nil
