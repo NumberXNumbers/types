@@ -120,6 +120,18 @@ func TestPanicBadMatrix(t *testing.T) {
 	}
 }
 
+func TestVarEvalMustEval(t *testing.T) {
+	var1 := NewVar(Value)
+
+	if c1, err := var1.Eval(2); c1.Type() != Value || err != nil {
+		t.Fail()
+	}
+
+	if c2 := var1.MustEval(2); c2.Type() != Value {
+		t.Fail()
+	}
+}
+
 func TestPanicBadVariable(t *testing.T) {
 	m := NewVar(Matrix)
 

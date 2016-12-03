@@ -2,6 +2,8 @@ package ops
 
 import (
 	"fmt"
+	"math"
+	"math/cmplx"
 	"testing"
 
 	args "github.com/NumberXNumbers/types/gc/functions/arguments"
@@ -388,6 +390,27 @@ func TestPanicBadSqrt(t *testing.T) {
 	}
 }
 
+func TestConj(t *testing.T) {
+	solutionA := MustConj(args.MakeConst(3 + 5i))
+	if solutionA.Value().Complex() != 3-5i {
+		t.Fail()
+	}
+
+	solutionB := MustConj(args.MakeConst(v.MakeVector(v.RowSpace, 2+1i, -3-3i)))
+	if solutionB.Vector().Get(0).Complex() != 2-1i ||
+		solutionB.Vector().Get(1).Complex() != -3+3i {
+		t.Fail()
+	}
+
+	solutionC := MustConj(args.MakeConst(m.MakeMatrix(v.MakeVector(v.RowSpace, 2+1i, -3-3i), v.MakeVector(v.RowSpace, 4+2i, -1i))))
+	if solutionC.Matrix().Get(0, 0).Complex() != 2-1i ||
+		solutionC.Matrix().Get(0, 1).Complex() != -3+3i ||
+		solutionC.Matrix().Get(1, 0).Complex() != 4-2i ||
+		solutionC.Matrix().Get(1, 1).Complex() != 1i {
+		t.Fail()
+	}
+}
+
 type testConst struct{}
 
 func (c *testConst) Type() args.Type { return args.Constant }
@@ -414,6 +437,13 @@ func TestPanicBadConj(t *testing.T) {
 	}
 }
 
+func TestSin(t *testing.T) {
+	solutionA := MustSin(args.MakeConst(math.Pi))
+	if cmplx.Abs(solutionA.Value().Complex()-0) >= 1e-10 {
+		t.Fail()
+	}
+}
+
 func TestPanicBadSin(t *testing.T) {
 	v1 := args.MakeConst(v.NewVector(v.RowSpace, 3))
 
@@ -427,6 +457,13 @@ func TestPanicBadSin(t *testing.T) {
 
 	if solution != nil {
 		t.Error("Expected Panic")
+	}
+}
+
+func TestCos(t *testing.T) {
+	solutionA := MustCos(args.MakeConst(math.Pi / 2.0))
+	if cmplx.Abs(solutionA.Value().Complex()-0) >= 1e-10 {
+		t.Fail()
 	}
 }
 
@@ -446,6 +483,13 @@ func TestPanicBadCos(t *testing.T) {
 	}
 }
 
+func TestTan(t *testing.T) {
+	solutionA := MustTan(args.MakeConst(math.Pi))
+	if cmplx.Abs(solutionA.Value().Complex()-0) >= 1e-10 {
+		t.Fail()
+	}
+}
+
 func TestPanicBadTan(t *testing.T) {
 	v1 := args.MakeConst(v.NewVector(v.RowSpace, 3))
 
@@ -459,6 +503,13 @@ func TestPanicBadTan(t *testing.T) {
 
 	if solution != nil {
 		t.Error("Expected Panic")
+	}
+}
+
+func TestAtan(t *testing.T) {
+	solutionA := MustAtan(args.MakeConst(math.Pi))
+	if cmplx.Abs(solutionA.Value().Complex()-1.26262726) >= 1e-6 {
+		t.Fail()
 	}
 }
 
@@ -478,6 +529,13 @@ func TestPanicBadAtan(t *testing.T) {
 	}
 }
 
+func TestAcos(t *testing.T) {
+	solutionA := MustAcos(args.MakeConst(math.Pi))
+	if cmplx.Abs(solutionA.Value().Complex()-1.81152627) >= 1e-6 {
+		t.Fail()
+	}
+}
+
 func TestPanicBadAcos(t *testing.T) {
 	v1 := args.MakeConst(v.NewVector(v.RowSpace, 3))
 
@@ -491,6 +549,13 @@ func TestPanicBadAcos(t *testing.T) {
 
 	if solution != nil {
 		t.Error("Expected Panic")
+	}
+}
+
+func TestAsin(t *testing.T) {
+	solutionA := MustAsin(args.MakeConst(math.Pi))
+	if cmplx.Abs(solutionA.Value().Complex()-1.57079632) >= 1e-6 {
+		t.Fail()
 	}
 }
 
@@ -510,6 +575,13 @@ func TestPanicBadAsin(t *testing.T) {
 	}
 }
 
+func TestSinh(t *testing.T) {
+	solutionA := MustSinh(args.MakeConst(math.Pi))
+	if cmplx.Abs(solutionA.Value().Complex()-11.5487393) >= 1e-6 {
+		t.Fail()
+	}
+}
+
 func TestPanicBadSinh(t *testing.T) {
 	v1 := args.MakeConst(v.NewVector(v.RowSpace, 3))
 
@@ -523,6 +595,13 @@ func TestPanicBadSinh(t *testing.T) {
 
 	if solution != nil {
 		t.Error("Expected Panic")
+	}
+}
+
+func TestCosh(t *testing.T) {
+	solutionA := MustCosh(args.MakeConst(math.Pi))
+	if cmplx.Abs(solutionA.Value().Complex()-11.5919532) >= 1e-6 {
+		t.Fail()
 	}
 }
 
@@ -542,6 +621,13 @@ func TestPanicBadCosh(t *testing.T) {
 	}
 }
 
+func TestTanh(t *testing.T) {
+	solutionA := MustTanh(args.MakeConst(math.Pi))
+	if cmplx.Abs(solutionA.Value().Complex()-0.9962720) >= 1e-6 {
+		t.Fail()
+	}
+}
+
 func TestPanicBadTanh(t *testing.T) {
 	v1 := args.MakeConst(v.NewVector(v.RowSpace, 3))
 
@@ -555,6 +641,13 @@ func TestPanicBadTanh(t *testing.T) {
 
 	if solution != nil {
 		t.Error("Expected Panic")
+	}
+}
+
+func TestAtanh(t *testing.T) {
+	solutionA := MustAtanh(args.MakeConst(math.Pi))
+	if cmplx.Abs(solutionA.Value().Complex()-0.3297653) >= 1e-6 {
+		t.Fail()
 	}
 }
 
@@ -574,6 +667,13 @@ func TestPanicBadAtanh(t *testing.T) {
 	}
 }
 
+func TestAcosh(t *testing.T) {
+	solutionA := MustAcosh(args.MakeConst(math.Pi))
+	if cmplx.Abs(solutionA.Value().Complex()-1.8115262) >= 1e-6 {
+		t.Fail()
+	}
+}
+
 func TestPanicBadAcosh(t *testing.T) {
 	v1 := args.MakeConst(v.NewVector(v.RowSpace, 3))
 
@@ -587,6 +687,13 @@ func TestPanicBadAcosh(t *testing.T) {
 
 	if solution != nil {
 		t.Error("Expected Panic")
+	}
+}
+
+func TestAsinh(t *testing.T) {
+	solutionA := MustAsinh(args.MakeConst(math.Pi))
+	if cmplx.Abs(solutionA.Value().Complex()-1.862295) >= 1e-6 {
+		t.Fail()
 	}
 }
 
