@@ -1,27 +1,9 @@
-package functions
+package arguments
 
 import (
 	m "github.com/NumberXNumbers/types/gc/matrices"
 	gcv "github.com/NumberXNumbers/types/gc/values"
 	v "github.com/NumberXNumbers/types/gc/vectors"
-)
-
-// Type is the type of the constant
-type Type int
-
-const (
-	// Value is for gcv.Value and is used for constant constants, i.e 5
-	Value Type = iota
-	// Vector is for v.Vector
-	Vector
-	// Matrix is for m.Matrix
-	Matrix
-	// Constant is for Const
-	Constant
-	// Variable is for Vars
-	Variable
-	// Operation is for operations
-	Operation
 )
 
 // Const is the GoCalculate constant type
@@ -65,6 +47,16 @@ func (c *constant) Value() gcv.Value {
 		panic("constant is not of type Value")
 	}
 	return c.constant.(gcv.Value).Copy()
+}
+
+// Eval is mostly just to make sure the constant meets the requirements for Var interface as well as Const
+func (c *constant) Eval(x interface{}) (Const, error) {
+	return c, nil
+}
+
+// MustEval is mostly just to make sure constant meets the requirements for Var interface as well as Const
+func (c *constant) MustEval(x interface{}) Const {
+	return c
 }
 
 // MakeConst will take an interface of type Value, Vector or Matrix

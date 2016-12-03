@@ -3,17 +3,18 @@ package functions
 import (
 	"errors"
 
+	args "github.com/NumberXNumbers/types/gc/functions/arguments"
 	m "github.com/NumberXNumbers/types/gc/matrices"
 	gcv "github.com/NumberXNumbers/types/gc/values"
 	v "github.com/NumberXNumbers/types/gc/vectors"
 )
 
 // Calculate will return Calculations or error
-func Calculate(inputs ...interface{}) (Const, error) {
+func Calculate(inputs ...interface{}) (args.Const, error) {
 	var tempOpsStack []string
 	var postfixStack []interface{}
 
-	var inputType = make(map[int]Type)
+	var inputType = make(map[int]args.Type)
 	for i, n := range inputs {
 		topIndexInPostfixStack := len(postfixStack) - 1
 		switch n.(type) {
@@ -37,7 +38,7 @@ func Calculate(inputs ...interface{}) (Const, error) {
 						tempOpsStack = tempOpsStack[:topIndexInTempOpsStack]
 						finishComparing = true
 					} else {
-						inputType[topIndexInPostfixStack+1] = Operation
+						inputType[topIndexInPostfixStack+1] = args.Operation
 						postfixStack, tempOpsStack = append(postfixStack, topOperationInTempOpsStack), tempOpsStack[:topIndexInTempOpsStack]
 					}
 					topIndexInTempOpsStack = len(tempOpsStack) - 1
@@ -71,12 +72,12 @@ func Calculate(inputs ...interface{}) (Const, error) {
 								tempOpsStack = append(tempOpsStack, operation)
 								finishComparing = true
 							} else {
-								inputType[topIndexInPostfixStack+1] = Operation
+								inputType[topIndexInPostfixStack+1] = args.Operation
 								postfixStack, tempOpsStack = append(postfixStack, topOperationInTempOpsStack), tempOpsStack[:topIndexInTempOpsStack]
 								topIndexInTempOpsStack = len(tempOpsStack) - 1
 							}
 						} else if orderOfOperations[operation] < orderOfOperations[topOperationInTempOpsStack] || isPreviousUnary {
-							inputType[topIndexInPostfixStack+1] = Operation
+							inputType[topIndexInPostfixStack+1] = args.Operation
 							postfixStack, tempOpsStack = append(postfixStack, topOperationInTempOpsStack), tempOpsStack[:topIndexInTempOpsStack]
 							topIndexInTempOpsStack = len(tempOpsStack) - 1
 						}
@@ -98,18 +99,18 @@ func Calculate(inputs ...interface{}) (Const, error) {
 					if operation == pow {
 						tempOpsStack = append(tempOpsStack, operation)
 					} else {
-						inputType[topIndexInPostfixStack+1] = Operation
+						inputType[topIndexInPostfixStack+1] = args.Operation
 						postfixStack, tempOpsStack = append(postfixStack, topOperationInTempOpsStack), tempOpsStack[:topIndexInTempOpsStack]
 						tempOpsStack = append(tempOpsStack, operation)
 					}
 				}
 			}
 		case int, int32, int64, float32, float64, complex64, complex128, gcv.Value, v.Vector, m.Matrix:
-			postfixStack = append(postfixStack, MakeConst(inputs[i]))
-			inputType[topIndexInPostfixStack+1] = Constant
-		case Const:
+			postfixStack = append(postfixStack, args.MakeConst(inputs[i]))
+			inputType[topIndexInPostfixStack+1] = args.Constant
+		case args.Const:
 			postfixStack = append(postfixStack, n)
-			inputType[topIndexInPostfixStack+1] = Constant
+			inputType[topIndexInPostfixStack+1] = args.Constant
 		default:
 			return nil, errors.New("Input type not supported")
 		}
@@ -123,18 +124,18 @@ func Calculate(inputs ...interface{}) (Const, error) {
 		if operation == "(" {
 			return nil, errors.New("Mismatch of Parentheses found")
 		}
-		inputType[topIndexInPostfixStack+1] = Operation
+		inputType[topIndexInPostfixStack+1] = args.Operation
 		postfixStack = append(postfixStack, operation)
 	}
 
-	var operand1 Const
-	var operand2 Const
-	var operandStack []Const
+	var operand1 args.Const
+	var operand2 args.Const
+	var operandStack []args.Const
 	i := 0
 	for i < len(postfixStack) {
-		if inputType[i] == Constant {
-			operandStack = append(operandStack, postfixStack[i].(Const))
-		} else if inputType[i] == Operation {
+		if inputType[i] == args.Constant {
+			operandStack = append(operandStack, postfixStack[i].(args.Const))
+		} else if inputType[i] == args.Operation {
 			operation := postfixStack[i].(string)
 			if h, ok := unaryFuncs[operation]; ok {
 				if len(operandStack) == 0 {
@@ -176,7 +177,7 @@ func Calculate(inputs ...interface{}) (Const, error) {
 }
 
 // MustCalculate is the same as calculate, but will panic
-func MustCalculate(inputs ...interface{}) Const {
+func MustCalculate(inputs ...interface{}) args.Const {
 	constant, err := Calculate(inputs...)
 	if err != nil {
 		panic(err)
