@@ -96,11 +96,11 @@ func TestSub(t *testing.T) {
 		t.Fail()
 	}
 
-	if !reflect.DeepEqual(resultVectorA.Get(0), gcv.MakeValue(0.0)) ||
-		!reflect.DeepEqual(resultVectorA.Get(1), gcv.MakeValue(0.0)) ||
+	if !resultVectorA.Get(0).IsZero() ||
+		!resultVectorA.Get(1).IsZero() ||
 		resultVectorA.Space() != v.ColSpace {
-		t.Errorf("Expected %v, %v and %v, received %v, %v and %v", gcv.MakeValue(0.0), gcv.MakeValue(0.0),
-			v.ColSpace, resultVectorA.Get(0), resultVectorA.Get(1), resultVectorA.Type())
+		t.Errorf("Expected %t, %t and %v, received %t, %t and %v", true, true,
+			v.ColSpace, resultVectorA.Get(0).IsZero(), resultVectorA.Get(1).IsZero(), resultVectorA.Type())
 	}
 
 	testVectorB := v.MakeVector(v.RowSpace, gcv.MakeValue(1+1i), gcv.MakeValue(2+1i))
@@ -111,11 +111,11 @@ func TestSub(t *testing.T) {
 		t.Fail()
 	}
 
-	if !reflect.DeepEqual(resultVectorB.Get(0), gcv.MakeValue(0+0i)) ||
-		!reflect.DeepEqual(resultVectorB.Get(1), gcv.MakeValue(0+0i)) ||
+	if !resultVectorA.Get(0).IsZero() ||
+		!resultVectorA.Get(1).IsZero() ||
 		resultVectorB.Space() != v.RowSpace {
-		t.Errorf("Expected %v, %v and %v, received %v, %v and %v", gcv.MakeValue(0+0i), gcv.MakeValue(0+0i),
-			v.RowSpace, resultVectorB.Get(0), resultVectorB.Get(1), resultVectorB.Type())
+		t.Errorf("Expected %t, %t and %v, received %t, %t and %v", true, true,
+			v.RowSpace, resultVectorB.Get(0).IsZero(), resultVectorB.Get(1).IsZero(), resultVectorB.Type())
 	}
 
 	testVectorCa := v.MakeVector(v.RowSpace, gcv.MakeValue(1), gcv.MakeValue(2))

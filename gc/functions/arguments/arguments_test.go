@@ -105,7 +105,7 @@ func TestPanicBadVector(t *testing.T) {
 }
 
 func TestPanicBadMatrix(t *testing.T) {
-	m := MakeConst(gcv.NewValue())
+	m := MakeConst(gcv.Zero())
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -141,7 +141,7 @@ func TestPanicBadVariable(t *testing.T) {
 		}
 	}()
 
-	solution := m.MustEval(gcv.NewValue())
+	solution := m.MustEval(gcv.Zero())
 
 	if solution != nil {
 		t.Error("Expected Panic")

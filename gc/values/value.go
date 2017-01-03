@@ -11,6 +11,7 @@ const (
 )
 
 // Value is the main return type for the GoCalculate Framework
+// Values are immutable once created
 type Value interface {
 	// returns the real part of a value
 	Real() float64
@@ -21,13 +22,8 @@ type Value interface {
 	// returns the compelx representation of a value
 	Complex() complex128
 
-	// allows you to reset the value
-	Set(val interface{})
-
 	// returns the type of raw value
 	Type() Type
-
-	Copy() Value
 
 	IsZero() bool
 }
@@ -46,7 +42,8 @@ func (v *value) Complex() complex128 { return complex(v.Real(), v.Imag()) }
 
 func (v *value) Type() Type { return v.valueType }
 
-func (v *value) Set(val interface{}) {
+// allows you to reset the value. Will return Value
+func (v *value) set(val interface{}) Value {
 	switch val.(type) {
 	case Value:
 		value := val.(Value)
@@ -105,24 +102,11 @@ func (v *value) Set(val interface{}) {
 		v.real = 0
 		v.imaginary = 0
 	}
-}
-
-func (v *value) Copy() Value {
-	value := new(value)
-	value.valueType = v.Type()
-	value.real = v.Real()
-	value.imaginary = v.Imag()
-	return value
+	return v
 }
 
 func (v *value) IsZero() bool {
 	return v.Real() == 0 && v.Imag() == 0
-}
-
-// NewValue returns the 0 real value
-func NewValue() Value {
-	value := new(value)
-	return value
 }
 
 // MakeValue returns a Value with value val
@@ -131,6 +115,6 @@ func MakeValue(val interface{}) Value {
 		return val.(Value)
 	}
 	value := new(value)
-	value.Set(val)
+	value.set(val)
 	return value
 }

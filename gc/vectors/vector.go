@@ -106,8 +106,7 @@ func (v *vector) Conj() {
 	if v.Type() == gcv.Complex {
 		for i := 0; i < v.Len(); i++ {
 			value := v.Get(i)
-			value.Set(gcvops.Conj(value))
-			v.Set(i, value)
+			v.Set(i, gcvops.Conj(value))
 		}
 	}
 }
@@ -120,7 +119,7 @@ func (v *vector) ConjTrans() {
 
 // implementation of Norm method
 func (v *vector) Norm() gcv.Value {
-	dotProduct := gcv.NewValue()
+	dotProduct := gcv.Zero()
 	conjVector := MakeConjTransVector(v)
 	for i := 0; i < v.Len(); i++ {
 		dotProduct = gcvops.Add(dotProduct, gcvops.Mult(v.Get(i), conjVector.Get(i)))
