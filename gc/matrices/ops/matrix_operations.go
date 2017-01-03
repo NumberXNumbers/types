@@ -44,7 +44,7 @@ func VMMult(vector v.Vector, matrix m.Matrix) (v.Vector, error) {
 	}
 	newVector := vector.Copy()
 	for i := 0; i < matrix.GetNumRows(); i++ {
-		sum := gcv.NewValue()
+		sum := gcv.Zero()
 		for j := 0; j < matrix.GetNumCols(); j++ {
 			sum = gcvops.Add(sum, gcvops.Mult(vector.Get(j), matrix.Get(j, i)))
 		}
@@ -73,7 +73,7 @@ func MVMult(vector v.Vector, matrix m.Matrix) (v.Vector, error) {
 	}
 	newVector := vector.Copy()
 	for i := 0; i < matrix.GetNumRows(); i++ {
-		sum := gcv.NewValue()
+		sum := gcv.Zero()
 		for j := 0; j < matrix.GetNumCols(); j++ {
 			sum = gcvops.Add(sum, gcvops.Mult(matrix.Get(i, j), vector.Get(j)))
 		}
@@ -112,7 +112,7 @@ func MultSimple(matrixA m.Matrix, matrixB m.Matrix) (m.Matrix, error) {
 	var sum gcv.Value
 	for i := 0; i < matrixA.GetNumRows(); i++ {
 		for j := 0; j < matrixB.GetNumCols(); j++ {
-			sum = gcv.NewValue()
+			sum = gcv.Zero()
 			for k := 0; k < matrixA.GetNumCols(); k++ {
 				sum = gcvops.Add(sum, gcvops.Mult(matrixA.Get(i, k), matrixB.Get(k, j)))
 			}

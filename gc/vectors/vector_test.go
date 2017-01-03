@@ -11,8 +11,8 @@ func TestGetAndSetMethodsVector(t *testing.T) {
 	testVectorA := NewVector(ColSpace, 3)
 	testVectorB := NewVector(RowSpace, 4)
 
-	if !reflect.DeepEqual(testVectorA.Get(0), gcv.NewValue()) {
-		t.Errorf("Expected %v, received %v", gcv.NewValue(), testVectorA.Get(0))
+	if !reflect.DeepEqual(testVectorA.Get(0), gcv.Zero()) {
+		t.Errorf("Expected %v, received %v", gcv.Zero(), testVectorA.Get(0))
 	}
 
 	testVectorB.Set(0, gcv.MakeValue(2+2i))
@@ -30,7 +30,7 @@ func TestSetValuesVectors(t *testing.T) {
 	testVectors.SetValue(0, 1, testValue)
 
 	if !reflect.DeepEqual(testVectors.Get(0).Get(1), testValue) {
-		t.Fail()
+		t.Error("Test Failed")
 	}
 }
 
@@ -237,11 +237,11 @@ func TestSetAndSpaceVectors(t *testing.T) {
 	testVectorsA.Set(0, testVectorB)
 
 	if !reflect.DeepEqual(testVectorB, testVectorsA.Get(0)) {
-		t.Fail()
+		t.Error("Test Failed")
 	}
 
 	if testVectorsA.Space() != ColSpace {
-		t.Fail()
+		t.Error("Test Failed")
 	}
 }
 
@@ -253,7 +253,7 @@ func TestCopyVectors(t *testing.T) {
 	testCopyVector := testVectorsA.Copy()
 
 	if !reflect.DeepEqual(testCopyVector, testVectorsA) {
-		t.Fail()
+		t.Error("Test Failed")
 	}
 }
 
@@ -267,13 +267,13 @@ func TestAppendVectors(t *testing.T) {
 	testVectorB.Append(gcv.MakeValue(8))
 
 	if !reflect.DeepEqual(testVectorB.Get(2), gcv.MakeValue(8)) {
-		t.Fail()
+		t.Error("Test Failed")
 	}
 
 	testVectorsA.Append(testVectorB)
 
 	if !reflect.DeepEqual(testVectorsA.Get(1), testVectorB) {
-		t.Fail()
+		t.Error("Test Failed")
 	}
 
 	testVectorsB := MakeVectors(ColSpace)
@@ -281,7 +281,7 @@ func TestAppendVectors(t *testing.T) {
 	testVectorsB.Append(testVectorB)
 
 	if !reflect.DeepEqual(testVectorsB.Get(0), testVectorB) {
-		t.Fail()
+		t.Error("Test Failed")
 	}
 }
 
@@ -301,11 +301,11 @@ func TestSubsetAndLenVectors(t *testing.T) {
 	lenB := testVectorsB.Len()
 
 	if !reflect.DeepEqual(testVectorsB.Get(0), testVectorB) || !reflect.DeepEqual(testVectorsB.Get(1), testVectorC) {
-		t.Fail()
+		t.Error("Test Failed")
 	}
 
 	if lenB != lenA-1 {
-		t.Fail()
+		t.Error("Test Failed")
 	}
 }
 
@@ -317,7 +317,7 @@ func TestVectors(t *testing.T) {
 	testVectorsA := MakeVectors(ColSpace, testVectorA, testVectorB)
 
 	if !reflect.DeepEqual(testVectorsA.Vectors()[0], testVectorA) || !reflect.DeepEqual(testVectorsA.Vectors()[1], testVectorB) {
-		t.Fail()
+		t.Error("Test Failed")
 	}
 
 	testVectorsB := NewVectors(RowSpace, 3, 4)
@@ -326,8 +326,8 @@ func TestVectors(t *testing.T) {
 		t.Error("Expected Type RowSpace")
 	}
 
-	if !reflect.DeepEqual(testVectorsB.Get(2).Get(3), gcv.MakeValue(0)) {
-		t.Fail()
+	if !reflect.DeepEqual(testVectorsB.Get(2).Get(3), gcv.Zero()) {
+		t.Error("Test Failed")
 	}
 
 }

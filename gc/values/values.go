@@ -42,7 +42,7 @@ func (v *values) setValues(vals []Value) {
 	v.coreType = Real
 	for index, val := range vals {
 		if val != nil {
-			v.Set(index, val.Copy())
+			v.Set(index, val)
 		}
 	}
 }
@@ -67,7 +67,7 @@ func (v *values) Set(index int, val Value) {
 func (v *values) Get(index int) Value {
 	val := v.vals[index]
 	if val == nil {
-		return NewValue()
+		return Zero()
 	}
 	return val
 }
@@ -82,7 +82,7 @@ func (v *values) Copy() Values {
 	vElements := make([]Value, len(v.vals))
 	for index, val := range v.values() {
 		if val != nil {
-			vElements[index] = val.Copy()
+			vElements[index] = val
 		}
 	}
 	vals.length = v.Len()

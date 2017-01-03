@@ -111,8 +111,7 @@ func (m *matrix) Get(row int, col int) gcv.Value { return m.elements.Get(row).Ge
 
 // implementation of Set method
 func (m *matrix) Set(row int, col int, value interface{}) {
-	val := gcv.NewValue()
-	val.Set(value)
+	val := gcv.MakeValue(value)
 	if m.Type() < val.Type() {
 		m.coreType = val.Type()
 	}
@@ -131,7 +130,7 @@ func (m matrix) Copy() Matrix {
 
 // implementation of Tr method
 func (m *matrix) Tr() (gcv.Value, error) {
-	trace := gcv.NewValue()
+	trace := gcv.Zero()
 
 	if !m.IsSquare() {
 		return trace, errors.New("Matrix is not square")
@@ -209,8 +208,8 @@ func (m *matrix) Det() (gcv.Value, error) {
 	rows, cols := matrixCopy.Dim()
 	for i := 0; i < cols; i++ {
 		for j := i + 1; j < rows; j++ {
-			valueA := matrixCopy.Get(i, i).Copy()
-			valueB := matrixCopy.Get(j, i).Copy()
+			valueA := matrixCopy.Get(i, i)
+			valueB := matrixCopy.Get(j, i)
 			valueAComplex := valueA.Complex()
 			if valueA.Real() < valueB.Real() || (valueAComplex == 0 && valueB.Complex() != 0) {
 				matrixCopy.Swap(i, j)
@@ -326,13 +325,13 @@ func (m *matrix) Inv() (Matrix, error) {
 	augMatrix := m.Aug(idMatrix)
 
 	for i := 0; i < degree; i++ {
-		valueA := augMatrix.Get(i, i).Copy()
+		valueA := augMatrix.Get(i, i)
 		if valueA.Complex() == 0 {
 			count := i + 1
 			for count < degree {
 				valueAtCount := augMatrix.Get(count, i)
 				if valueAtCount.Complex() != 0 {
-					valueA = valueAtCount.Copy()
+					valueA = valueAtCount
 					augMatrix.Swap(i, count)
 					break
 				}
@@ -349,7 +348,7 @@ func (m *matrix) Inv() (Matrix, error) {
 
 		for j := 0; j < degree; j++ {
 			if i != j {
-				valueB := augMatrix.Get(j, i).Copy()
+				valueB := augMatrix.Get(j, i)
 				vector := sub(augMatrix.Elements().Get(j), sMult(valueB, augMatrix.Elements().Get(i)))
 				augMatrix.Elements().Set(j, vector)
 			}
@@ -386,7 +385,7 @@ func MakeMatrixAlt(elements v.Vectors) Matrix {
 			if lenVector <= j {
 				break
 			}
-			matrixElements.SetValue(i, j, vector.Get(j).Copy())
+			matrixElements.SetValue(i, j, vector.Get(j))
 		}
 	}
 

@@ -32,21 +32,21 @@ func (c *constant) Matrix() m.Matrix {
 	if c.Type() != Matrix {
 		panic("constant is not of type Matrix")
 	}
-	return c.constant.(m.Matrix).Copy()
+	return c.constant.(m.Matrix)
 }
 
 func (c *constant) Vector() v.Vector {
 	if c.Type() != Vector {
 		panic("constant is not of type Vector")
 	}
-	return c.constant.(v.Vector).Copy()
+	return c.constant.(v.Vector)
 }
 
 func (c *constant) Value() gcv.Value {
 	if c.Type() != Value {
 		panic("constant is not of type Value")
 	}
-	return c.constant.(gcv.Value).Copy()
+	return c.constant.(gcv.Value)
 }
 
 // Eval is mostly just to make sure the constant meets the requirements for Var interface as well as Const
@@ -77,7 +77,7 @@ func MakeConst(c interface{}) Const {
 		c = gcv.MakeValue(c)
 		constant.constType = Value
 	default:
-		c = gcv.NewValue()
+		c = gcv.Zero()
 		constant.constType = Value
 	}
 	constant.constant = c

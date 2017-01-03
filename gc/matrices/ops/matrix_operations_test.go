@@ -59,7 +59,7 @@ func TestVMMult(t *testing.T) {
 	}
 
 	testVectorA.Trans()
-	testVectorA.Append(gcv.NewValue())
+	testVectorA.Append(gcv.Zero())
 	_, errC := VMMult(testVectorA, testMatrix)
 
 	if errC == nil {
@@ -107,7 +107,7 @@ func TestMVMult(t *testing.T) {
 	}
 
 	testVectorA.Trans()
-	testVectorA.Append(gcv.NewValue())
+	testVectorA.Append(gcv.Zero())
 	_, errC := MVMult(testVectorA, testMatrix)
 
 	if errC == nil {
@@ -170,8 +170,8 @@ func TestMultSimple(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(resultMatrixA.Get(0, 0), gcv.MakeValue(4.0)) ||
-		!reflect.DeepEqual(resultMatrixA.Get(0, 1), gcv.MakeValue(0.0)) ||
-		!reflect.DeepEqual(resultMatrixA.Get(1, 0), gcv.MakeValue(0.0)) ||
+		!reflect.DeepEqual(resultMatrixA.Get(0, 1), gcv.Zero()) ||
+		!reflect.DeepEqual(resultMatrixA.Get(1, 0), gcv.Zero()) ||
 		!reflect.DeepEqual(resultMatrixA.Get(1, 1), gcv.MakeValue(4.0)) {
 		t.Error("Failure: Test 1")
 	}
@@ -187,8 +187,8 @@ func TestMultSimple(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(resultMatrixB.Get(0, 0), gcv.MakeValue(4+0i)) ||
-		!reflect.DeepEqual(resultMatrixB.Get(0, 1), gcv.MakeValue(0+0i)) ||
-		!reflect.DeepEqual(resultMatrixB.Get(1, 0), gcv.MakeValue(0+0i)) ||
+		!reflect.DeepEqual(resultMatrixB.Get(0, 1), gcv.Zero()) ||
+		!reflect.DeepEqual(resultMatrixB.Get(1, 0), gcv.Zero()) ||
 		!reflect.DeepEqual(resultMatrixB.Get(1, 1), gcv.MakeValue(4+0i)) {
 		t.Error("Failure: Test2")
 	}
@@ -214,8 +214,8 @@ func TestMultSimple(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(resultMatrixD.Get(0, 0), gcv.MakeValue(1)) ||
-		!reflect.DeepEqual(resultMatrixD.Get(0, 1), gcv.MakeValue(0)) ||
-		!reflect.DeepEqual(resultMatrixD.Get(1, 0), gcv.MakeValue(0)) ||
+		!reflect.DeepEqual(resultMatrixD.Get(0, 1), gcv.Zero()) ||
+		!reflect.DeepEqual(resultMatrixD.Get(1, 0), gcv.Zero()) ||
 		!reflect.DeepEqual(resultMatrixD.Get(1, 1), gcv.MakeValue(1)) {
 		t.Error("Failure: Test 1")
 	}
@@ -227,8 +227,8 @@ func TestMultSimple(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(resultMatrixE.Get(0, 0), gcv.MakeValue(2)) ||
-		!reflect.DeepEqual(resultMatrixE.Get(0, 1), gcv.MakeValue(0)) ||
-		!reflect.DeepEqual(resultMatrixE.Get(1, 0), gcv.MakeValue(0)) ||
+		!reflect.DeepEqual(resultMatrixE.Get(0, 1), gcv.Zero()) ||
+		!reflect.DeepEqual(resultMatrixE.Get(1, 0), gcv.Zero()) ||
 		!reflect.DeepEqual(resultMatrixE.Get(1, 1), gcv.MakeValue(2)) {
 		t.Error("Failure: Test 1")
 	}
@@ -264,8 +264,8 @@ func TestAdd(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(resultMatrixA.Get(0, 0), gcv.MakeValue(4.0)) ||
-		!reflect.DeepEqual(resultMatrixA.Get(0, 1), gcv.MakeValue(0.0)) ||
-		!reflect.DeepEqual(resultMatrixA.Get(1, 0), gcv.MakeValue(0.0)) ||
+		!reflect.DeepEqual(resultMatrixA.Get(0, 1), gcv.Zero()) ||
+		!reflect.DeepEqual(resultMatrixA.Get(1, 0), gcv.Zero()) ||
 		!reflect.DeepEqual(resultMatrixA.Get(1, 1), gcv.MakeValue(4.0)) {
 		t.Error("Failure: Test 1")
 	}
@@ -281,8 +281,8 @@ func TestAdd(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(resultMatrixB.Get(0, 0), gcv.MakeValue(4+0i)) ||
-		!reflect.DeepEqual(resultMatrixB.Get(0, 1), gcv.MakeValue(0+0i)) ||
-		!reflect.DeepEqual(resultMatrixB.Get(1, 0), gcv.MakeValue(0+0i)) ||
+		!reflect.DeepEqual(resultMatrixB.Get(0, 1), gcv.Zero()) ||
+		!reflect.DeepEqual(resultMatrixB.Get(1, 0), gcv.Zero()) ||
 		!reflect.DeepEqual(resultMatrixB.Get(1, 1), gcv.MakeValue(4+0i)) {
 		t.Error("Failure: Test2")
 	}
@@ -331,10 +331,10 @@ func TestSub(t *testing.T) {
 		t.Fail()
 	}
 
-	if !reflect.DeepEqual(resultMatrixA.Get(0, 0), gcv.MakeValue(0.0)) ||
-		!reflect.DeepEqual(resultMatrixA.Get(0, 1), gcv.MakeValue(0.0)) ||
-		!reflect.DeepEqual(resultMatrixA.Get(1, 0), gcv.MakeValue(0.0)) ||
-		!reflect.DeepEqual(resultMatrixA.Get(1, 1), gcv.MakeValue(0.0)) {
+	if !reflect.DeepEqual(resultMatrixA.Get(0, 0), gcv.Zero()) ||
+		!reflect.DeepEqual(resultMatrixA.Get(0, 1), gcv.Zero()) ||
+		!reflect.DeepEqual(resultMatrixA.Get(1, 0), gcv.Zero()) ||
+		!reflect.DeepEqual(resultMatrixA.Get(1, 1), gcv.Zero()) {
 		t.Error("Failure: Test 1")
 	}
 
@@ -348,10 +348,10 @@ func TestSub(t *testing.T) {
 		t.Fail()
 	}
 
-	if !reflect.DeepEqual(resultMatrixB.Get(0, 0), gcv.MakeValue(0+0i)) ||
-		!reflect.DeepEqual(resultMatrixB.Get(0, 1), gcv.MakeValue(0+0i)) ||
-		!reflect.DeepEqual(resultMatrixB.Get(1, 0), gcv.MakeValue(0+0i)) ||
-		!reflect.DeepEqual(resultMatrixB.Get(1, 1), gcv.MakeValue(0+0i)) {
+	if !reflect.DeepEqual(resultMatrixB.Get(0, 0), gcv.Zero()) ||
+		!reflect.DeepEqual(resultMatrixB.Get(0, 1), gcv.Zero()) ||
+		!reflect.DeepEqual(resultMatrixB.Get(1, 0), gcv.Zero()) ||
+		!reflect.DeepEqual(resultMatrixB.Get(1, 1), gcv.Zero()) {
 		t.Error("Failure: Test2")
 	}
 

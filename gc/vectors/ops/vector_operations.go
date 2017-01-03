@@ -51,7 +51,7 @@ func Acos(vectorA v.Vector, vectorB v.Vector) (gcv.Value, error) {
 
 // InnerProduct returns the inner product for real Vectors
 func InnerProduct(vectorA v.Vector, vectorB v.Vector) (gcv.Value, error) {
-	product := gcv.NewValue()
+	product := gcv.Zero()
 
 	if vectorA.Len() != vectorB.Len() {
 		return product, errors.New("Length of v does not match")

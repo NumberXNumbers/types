@@ -62,7 +62,7 @@ func TestMakeValueSetValueTypePrint(t *testing.T) {
 		t.Fail()
 	}
 
-	valueTestE := NewValue()
+	valueTestE := Zero()
 
 	if valueTestE.Type() != Real {
 		t.Fail()
@@ -82,9 +82,8 @@ func TestMakeValueSetValueTypePrint(t *testing.T) {
 		t.Fail()
 	}
 
-	valueTestH := NewValue()
 	value := MakeValue(complexTestValueA)
-	valueTestH.Set(value)
+	valueTestH := MakeValue(value)
 
 	if valueTestH.Type() != Complex {
 		t.Fail()
@@ -184,7 +183,7 @@ func TestComplex(t *testing.T) {
 func TestMakeValuesNewValuesAndValues(t *testing.T) {
 	testValueA := MakeValue(0.5)
 	testValueB := MakeValue(0.6 + 0.4i)
-	testValueC := NewValue()
+	testValueC := Zero()
 	testValuesA := MakeValues(testValueA, testValueB, testValueC)
 
 	if !reflect.DeepEqual(RetrieveValues(testValuesA)[0], testValueA) || !reflect.DeepEqual(testValuesA.values()[1], testValueB) || testValuesA.values()[2] != nil {
@@ -193,7 +192,7 @@ func TestMakeValuesNewValuesAndValues(t *testing.T) {
 
 	testValuesB := NewValues(3)
 	for i := 0; i < testValuesB.Len(); i++ {
-		if !reflect.DeepEqual(testValuesB.Get(i), NewValue()) {
+		if !reflect.DeepEqual(testValuesB.Get(i), Zero()) {
 			t.Fail()
 		}
 	}
@@ -215,51 +214,6 @@ func TestGetandSetValues(t *testing.T) {
 	testValues.Set(1, newValueB)
 
 	if !reflect.DeepEqual(testValues.Get(0), newValueA) || !reflect.DeepEqual(testValues.Get(1), newValueB) {
-		t.Fail()
-	}
-}
-
-func TestCopyValues(t *testing.T) {
-	testValueA := MakeValue(0.5)
-	copyA := testValueA.Copy()
-
-	if copyA.Type() != Real {
-		t.Fail()
-	}
-
-	if !reflect.DeepEqual(copyA, testValueA) {
-		t.Fail()
-	}
-
-	testValueB := MakeValue(0.6)
-	values := MakeValues(testValueA, testValueB)
-
-	testValues := values.Copy()
-
-	testValueB.Set(4)
-
-	if !reflect.DeepEqual(testValues, values) {
-		t.Fail()
-	}
-
-	testValueC := MakeValue(1 + 5i)
-	copyC := testValueC.Copy()
-
-	if copyC.Type() != Complex {
-		t.Fail()
-	}
-
-	if !reflect.DeepEqual(copyC, testValueC) {
-		t.Fail()
-	}
-
-	copyC.Set(2)
-
-	if copyC.Type() != Real {
-		t.Fail()
-	}
-
-	if reflect.DeepEqual(copyC, testValueC) {
 		t.Fail()
 	}
 }
