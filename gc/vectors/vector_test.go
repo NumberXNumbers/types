@@ -114,6 +114,42 @@ func TestNormMethodVector(t *testing.T) {
 	}
 }
 
+func TestUitMethodVector(t *testing.T) {
+	testVectorA := MakeVector(ColSpace, gcv.MakeValue(3), gcv.MakeValue(4))
+	solutionVectorA := MakeVector(ColSpace, gcv.MakeValue(0.6), gcv.MakeValue(0.8))
+
+	unitA, errA := testVectorA.Unit()
+
+	if errA != nil {
+		t.Fail()
+	}
+
+	if !reflect.DeepEqual(unitA, solutionVectorA) {
+		t.Errorf("Expected %v, received %v", unitA, solutionVectorA)
+	}
+
+	// valueA := (2 + 2i) / (3 + 0i)
+	// valueB := 1 / 3
+	// testVectorB := MakeVector(ColSpace, gcv.MakeValue(2+2i), gcv.MakeValue(1))
+	// solutionVectorB := MakeVector(ColSpace, gcv.MakeValue(valueA), gcv.MakeValue(valueB))
+	//
+	// unitB, errB := testVectorB.Unit()
+	//
+	// if errB != nil {
+	// 	t.Fail()
+	// }
+	//
+	// if !reflect.DeepEqual(unitB, solutionVectorB) {
+	// 	t.Errorf("Expected %v, received %v", unitB, solutionVectorB)
+	// }
+
+	testVectorC := MakeVector(ColSpace, gcv.Zero(), gcv.Zero())
+	_, errC := testVectorC.Unit()
+	if errC == nil {
+		t.Error("Expected Error")
+	}
+}
+
 func TestMakeNewTransVector(t *testing.T) {
 	testVectorA := NewVector(RowSpace, 4)
 	testTransVectorA := MakeTransVector(testVectorA)
