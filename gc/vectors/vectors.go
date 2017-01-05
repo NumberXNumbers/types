@@ -97,8 +97,7 @@ func (v *vectors) SetValue(i int, j int, value gcv.Value) {
 		v.coreType = value.Type()
 	}
 	vector := v.vects[i]
-	values := vector.Elements()
-	values.Set(j, value)
+	vector.Set(j, value)
 }
 
 func (v *vectors) Append(vect Vector) {

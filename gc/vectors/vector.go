@@ -1,6 +1,8 @@
 package vectors
 
 import (
+	"errors"
+
 	gcv "github.com/NumberXNumbers/types/gc/values"
 	gcvops "github.com/NumberXNumbers/types/gc/values/ops"
 )
@@ -28,6 +30,9 @@ type Vector interface {
 
 	// Return norm of vector
 	Norm() gcv.Value
+
+	// return the normalized unit vector of Vector. will return error if norm is equal to 0.
+	Unit() (Vector, error)
 
 	// Returns a new Copy of vector
 	Copy() Vector
@@ -125,6 +130,20 @@ func (v *vector) Norm() gcv.Value {
 		dotProduct = gcvops.Add(dotProduct, gcvops.Mult(v.Get(i), conjVector.Get(i)))
 	}
 	return gcvops.Sqrt(dotProduct)
+}
+
+// implementation of Unit method
+func (v *vector) Unit() (Vector, error) {
+	norm := v.Norm()
+	if norm.Complex() == 0 {
+		return nil, errors.New("Norm equal to zero")
+	}
+
+	unitVector := NewVector(v.Space(), v.Len())
+	for index, value := range gcv.RetrieveValues(v.Elements()) {
+		unitVector.Set(index, gcvops.Div(value, norm))
+	}
+	return unitVector, nil
 }
 
 // implementation of IndexOf method
