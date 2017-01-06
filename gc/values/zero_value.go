@@ -7,6 +7,7 @@ const (
 	zeroComplex = 0 + 0i
 	zeroType    = Real
 	isZero      = true
+	stringRep   = "0.0"
 )
 
 var zero *zeroValue
@@ -25,6 +26,8 @@ func (v *zeroValue) Type() Type { return zeroType }
 
 // IsZero will always return true
 func (v *zeroValue) IsZero() bool { return isZero }
+
+func (v *zeroValue) String() string { return stringRep }
 
 // Zero will return the zeroValue type as a Value
 func Zero() Value {

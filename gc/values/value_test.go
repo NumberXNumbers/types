@@ -286,3 +286,29 @@ func TestIndexOfValues(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestString(t *testing.T) {
+	testValueA := MakeValue(5)
+	testStringA := testValueA.String()
+	solutionA := "5.0"
+
+	if testStringA != solutionA {
+		t.Errorf("Expected %s, received %s", solutionA, testStringA)
+	}
+
+	testValueB := MakeValue(5 - 4i)
+	testStringB := testValueB.String()
+	solutionB := "(5.0-4.0i)"
+
+	if testStringB != solutionB {
+		t.Errorf("Expected %s, received %s", solutionB, testStringB)
+	}
+
+	testValueC := Zero()
+	testStringC := testValueC.String()
+	solutionC := "0.0"
+
+	if testStringC != solutionC {
+		t.Errorf("Expected %s, received %s", solutionC, testStringC)
+	}
+}
