@@ -290,15 +290,15 @@ func TestIndexOfValues(t *testing.T) {
 func TestString(t *testing.T) {
 	testValueA := MakeValue(5)
 	testStringA := testValueA.String()
-	solutionA := "5.0"
+	solutionA := "5"
 
 	if testStringA != solutionA {
 		t.Errorf("Expected %s, received %s", solutionA, testStringA)
 	}
 
-	testValueB := MakeValue(5 - 4i)
+	testValueB := MakeValue(5.2 - 4.13i)
 	testStringB := testValueB.String()
-	solutionB := "(5.0-4.0i)"
+	solutionB := "(5.2-4.1i)"
 
 	if testStringB != solutionB {
 		t.Errorf("Expected %s, received %s", solutionB, testStringB)
