@@ -1,6 +1,11 @@
 package values
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+	"strconv"
+	"strings"
+)
 
 // Type is the value type of Value
 type Type int
@@ -110,10 +115,14 @@ func (v *value) IsZero() bool {
 }
 
 func (v *value) String() string {
+	r := strconv.FormatFloat(v.Real(), 'g', -1, 64)
 	if v.Type() == Complex {
-		return fmt.Sprintf("%.[2]*[1]f", v.Complex(), v.precision)
+		c := strconv.FormatFloat(v.Real(), 'g', -1, 64)
+		dot := "."
+		min := math.Min(float64(len(strings.Split(r, dot)[1])), float64(len(strings.Split(c, dot)[1])))
+		return fmt.Sprintf("%.[2]*[1]f", v.Complex(), int(min))
 	}
-	return fmt.Sprintf("%.[2]*[1]f", v.Real(), v.precision)
+	return r
 }
 
 // MakeValue returns a Value with value val
