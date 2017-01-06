@@ -1,5 +1,7 @@
 package values
 
+import "fmt"
+
 // Type is the value type of Value
 type Type int
 
@@ -25,13 +27,18 @@ type Value interface {
 	// returns the type of raw value
 	Type() Type
 
+	// returns true if the Value is equal to zero
 	IsZero() bool
+
+	// String will return the string representation of the value
+	String() string
 }
 
 type value struct {
 	real      float64
 	imaginary float64
 	valueType Type
+	precision int
 }
 
 func (v *value) Real() float64 { return v.real }
@@ -45,12 +52,6 @@ func (v *value) Type() Type { return v.valueType }
 // allows you to reset the value. Will return Value
 func (v *value) set(val interface{}) Value {
 	switch val.(type) {
-	case Value:
-		value := val.(Value)
-		v.valueType = value.Type()
-		v.real = value.Real()
-		v.imaginary = value.Imag()
-		break
 	case int:
 		v.valueType = Real
 		v.real = float64(val.(int))
@@ -98,15 +99,21 @@ func (v *value) set(val interface{}) Value {
 		v.imaginary = imagValue
 		break
 	default:
-		v.valueType = Real
-		v.real = 0
-		v.imaginary = 0
+		return Zero()
 	}
+	v.precision = 1
 	return v
 }
 
 func (v *value) IsZero() bool {
 	return v.Real() == 0 && v.Imag() == 0
+}
+
+func (v *value) String() string {
+	if v.Type() == Complex {
+		return fmt.Sprintf("%.[2]*[1]f", v.Complex(), v.precision)
+	}
+	return fmt.Sprintf("%.[2]*[1]f", v.Real(), v.precision)
 }
 
 // MakeValue returns a Value with value val
